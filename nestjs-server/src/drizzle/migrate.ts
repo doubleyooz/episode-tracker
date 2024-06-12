@@ -1,13 +1,9 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Pool } from 'pg';
 
 import * as schema from './schema';
-
-dotenv.config({
-  path: '.env',
-});
 
 async function main() {
   const database = process.env.POSTGRES_DB;
@@ -19,7 +15,9 @@ async function main() {
     connectionString: `postgres://${user}:${password}@${host}:${port}/${database}`,
   });
 
-  await migrate(drizzle(pool, { schema }), { migrationsFolder: 'migrations' });
+  await migrate(drizzle(pool, { schema }), {
+    migrationsFolder: './src/drizzle/migrations',
+  });
 }
 
 main();
