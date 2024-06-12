@@ -40,8 +40,6 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-
-    height: 48,
     borderRadius: 16,
   },
   disabled: {

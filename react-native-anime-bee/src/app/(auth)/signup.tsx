@@ -1,6 +1,16 @@
-import { View, ScrollView, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
 import { loginSchema } from "@/src/utils/rules";
@@ -11,13 +21,14 @@ export default function LoginScreen() {
   const { control, handleSubmit, formState } = useForm({
     defaultValues: {
       email: "",
+      username: "",
       password: "",
     },
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async () => {
-    console.log("dsds");
+    console.log("register");
   };
 
   return (
@@ -26,7 +37,7 @@ export default function LoginScreen() {
         style={{ width: "30%", display: "flex", alignItems: "center", gap: 16 }}
       >
         <Image source={require("@/src/assets/images/logo.png")} />
-        <Label text="Welcome Back" uppercase fontSize={24} />
+        <Label text="Hop on Board" uppercase fontSize={24} />
       </View>
 
       <View style={styles.inputContainer}>
@@ -35,6 +46,15 @@ export default function LoginScreen() {
           name={"email"}
           control={control}
           placeholder="Email"
+          keyboardType="default"
+          required
+        />
+
+        <InputField
+          label={"Username"}
+          name={"username"}
+          control={control}
+          placeholder="username"
           keyboardType="default"
           required
         />
@@ -57,18 +77,11 @@ export default function LoginScreen() {
         />
 
         <Label
-          text={"Forgot Password?"}
+          text={"Already have an account? Sign In"}
+          onPress={() => router.navigate("/(auth)/login")}
           fontSize={16}
           disabled={false}
           variant={"primary"}
-        />
-
-        <Label
-          text={"Don’t you have an account? Sign up"}
-          fontSize={16}
-          onPress={() => router.navigate("/(auth)/signup")}
-          disabled={false}
-          variant={"text"}
         />
       </View>
     </ScrollView>
