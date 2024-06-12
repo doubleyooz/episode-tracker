@@ -8,101 +8,76 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import {
-  Entypo,
-  FontAwesome,
-  Fontisto,
-  Ionicons,
-  SimpleLineIcons,
-} from "@expo/vector-icons";
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
-import { router } from "expo-router";
-import axios from "axios";
-import { Toast } from "react-native-toast-notifications";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import InputField from "@/src/components/InputField";
+import CustomButton from "@/src/components/CustomButton";
+import { loginSchema } from "@/src/utils/rules";
+import Label from "@/src/components/Label";
 
 export default function LoginScreen() {
-  const [isPasswordVisible, setPasswordVisible] = useState(false);
-  const [buttonSpinner, setButtonSpinner] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    email: "",
-    password: "",
+  const { control, handleSubmit, formState } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: zodResolver(loginSchema),
   });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [required, setRequired] = useState("");
-  const [error, setError] = useState({
-    password: "",
-  });
-
-  const handlePasswordValidation = (value: string) => {
-    const password = value;
-    const passwordSpecialCharacter = /(?=.*[!@#$&*])/;
-    const passwordOneNumber = /(?=.*[0-9])/;
-    const passwordSixValue = /(?=.{6,})/;
-
-    if (!passwordSpecialCharacter.test(password)) {
-      setError({
-        ...error,
-        password: "Write at least one special character",
-      });
-      setUserInfo({ ...userInfo, password: "" });
-    } else if (!passwordOneNumber.test(password)) {
-      setError({
-        ...error,
-        password: "Write at least one number",
-      });
-      setUserInfo({ ...userInfo, password: "" });
-    } else if (!passwordSixValue.test(password)) {
-      setError({
-        ...error,
-        password: "Write at least 6 characters",
-      });
-      setUserInfo({ ...userInfo, password: "" });
-    } else {
-      setError({
-        ...error,
-        password: "",
-      });
-      setUserInfo({ ...userInfo, password: value });
-    }
+  const onSubmit = async () => {
+    console.log("dsds");
   };
-
-  const handleSignIn = async () => { };
 
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
-      <Text style={[styles.welcomeText, { fontFamily: "Raleway_700Bold" }]}>
-        Welcome Back!
-      </Text>
-      <Text style={styles.learningText}>
-        Login to your existing account of Becodemy
-      </Text>
-      <View style={styles.inputContainer}>
+      <View
+        style={{ width: "30%", display: "flex", alignItems: "center", gap: 16 }}
+      >
+        <Image source={require("@/src/assets/images/logo.png")} />
+        <Label text="Welcome Back" uppercase />
+      </View>
 
+      <View style={styles.inputContainer}>
         <InputField
           label={"Email"}
-          value={email}
-          setValue={setEmail}
-          error={"dsddfdd"}
+          name={"email"}
+          control={control}
           placeholder="Email"
           keyboardType="default"
           required
         />
+
         <InputField
           label={"Password"}
-          value={password}
-          setValue={setPassword}
-          isPassword
-          error={"sdadsddsdssdsdsa"}
+          name={"password"}
+          control={control}
           placeholder="Password"
           keyboardType="default"
+          isPassword
           required
         />
 
+        <CustomButton
+          text={"Login"}
+          onPress={handleSubmit(onSubmit)}
+          uppercase
+          disabled={!formState.isValid}
+        />
+
+        <Label
+          text={"Forgot Password?"}
+          fontSize={16}
+          disabled={false}
+          variant={"primary"}
+        />
+
+        <Label
+          text={"Don’t you have an account? Sign up"}
+          fontSize={16}
+          disabled={false}
+          variant={"text"}
+        />
       </View>
     </ScrollView>
   );
@@ -116,7 +91,11 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   pageContainer: {
-    display: 'flex', justifyContent: 'center', marginHorizontal: 'auto'
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    gap: 40,
   },
   welcomeText: {
     textAlign: "center",
@@ -124,8 +103,8 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    display: 'flex',
-
+    display: "flex",
+    width: "50%",
     rowGap: 24,
   },
   input: {
