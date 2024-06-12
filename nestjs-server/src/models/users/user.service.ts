@@ -6,7 +6,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as bcrypt from 'bcrypt';
 
@@ -77,6 +77,80 @@ export class UserService {
       .where(eq(schema.users.email, _email));
     if (result.length === 0) throw new NotFoundException('User not found');
     return { result: result };
+  }
+
+  async generateRecoveryCode(_email: string) {
+    const newCode = (Math.random() * 10)
+      .toString()
+      .substring(0, 7)
+      .replace('.', '');
+    const currentDate = new Date(); // gets the current date and time
+    currentDate.setHours(currentDate.getHours() + 1); // adds one hour
+
+    const result = await this.drizzle
+      .update(schema.users)
+      .set({
+        codeToValidate: newCode,
+        codeExpiration: currentDate.toISOString(),
+      })
+      .where(eq(schema.users.email, _email))
+      .returning({ verifyCode: schema.users.codeToValidate });
+    if (result.length === 0) throw new NotFoundException('User not found');
+    return { result: result };
+  }
+
+  async verifyRecoveryCode(_email: string, _code: string) {
+    const result = await this.drizzle
+      .select({
+        id: schema.users.id,
+        email: schema.users.email,
+        username: schema.users.username,
+        codeExpiration: schema.users.codeExpiration,
+      })
+      .from(schema.users)
+      .where(
+        and(
+          eq(schema.users.email, _email),
+          eq(schema.users.codeToValidate, _code),
+        ),
+      );
+
+    if (result.length === 0)
+      throw new UnauthorizedException('Invalid credentials');
+    return { result };
+  }
+
+  async updatePassword(_email: string, _newPassword: string) {
+    const result = await this.drizzle
+      .update(schema.users)
+      .set({
+        password: await bcrypt.hash(
+          _newPassword,
+          this.configService.get<number>('HASH_SALT'),
+        ),
+        codeToValidate: null,
+        codeExpiration: null,
+      })
+      .where(and(eq(schema.users.email, _email), eq(schema.users.active, true)))
+      .returning({ email: schema.users.email });
+    if (result.length === 0)
+      throw new UnauthorizedException('Invalid credentials');
+    return { result };
+  }
+
+  async activateAccount(_email: string) {
+    const result = await this.drizzle
+      .update(schema.users)
+      .set({
+        active: true,
+      })
+      .where(
+        and(eq(schema.users.email, _email), eq(schema.users.active, false)),
+      )
+      .returning({ email: schema.users.email, active: schema.users.active });
+
+    console.log(result);
+    return { result };
   }
 
   async deleteById(_id: number) {

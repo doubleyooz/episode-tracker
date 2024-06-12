@@ -22,6 +22,13 @@
       "when": 1718187619557,
       "tag": "0002_needy_wind_dancer",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1718227472329,
+      "tag": "0003_awesome_shotgun",
+      "breakpoints": true
     }
   ]
 }

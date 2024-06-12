@@ -5,10 +5,9 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import {} from '../models/users/user.module';
 import { UserService } from 'src/models/users/user.service';
 import { DrizzleProvider } from 'src/drizzle/drizzle.provider';
-
+import { SendGridClient } from 'src/common/email/sendgrid-client';
 @Module({
   imports: [
     JwtModule.registerAsync({
@@ -26,6 +25,7 @@ import { DrizzleProvider } from 'src/drizzle/drizzle.provider';
     AuthService,
     UserService,
     ...DrizzleProvider,
+    SendGridClient,
     LocalStrategy,
     JwtStrategy,
   ],

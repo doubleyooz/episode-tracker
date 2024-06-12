@@ -59,6 +59,7 @@ export default function LoginScreen() {
         <Label
           text={"Forgot Password?"}
           fontSize={16}
+          onPress={() => router.navigate("/(auth)/forgot")}
           disabled={false}
           variant={"primary"}
         />
@@ -66,7 +67,6 @@ export default function LoginScreen() {
         <Label
           text={"Don’t you have an account? Sign up"}
           fontSize={16}
-          onPress={() => router.navigate("/(auth)/signup")}
           disabled={false}
           variant={"text"}
         />

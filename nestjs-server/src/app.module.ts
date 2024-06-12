@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { UserModule } from './models/users/user.module';
 import { AuthModule } from './auth/auth.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,6 +19,10 @@ import { AuthModule } from './auth/auth.module';
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION: Joi.number().required(),
         HASH_SALT: Joi.number().required(),
+        SMTP_KEY: Joi.string().required(),
+        SMTP_USER: Joi.string().required(),
+        SMTP_HOST: Joi.string().required(),
+        SMTP_SENDER: Joi.string().required(),
       }),
       isGlobal: true,
     }),

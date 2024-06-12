@@ -19,6 +19,7 @@ export interface InputFieldProps {
   label: string;
   error?: string;
   isPassword?: boolean;
+  disabled?: boolean;
   placeholder: string;
   theme?: ThemeType;
   keyboardType: KeyboardTypeOptions;
@@ -33,6 +34,7 @@ export default function InputField({
   placeholder,
   isPassword,
   keyboardType,
+  disabled = false,
 }: InputFieldProps) {
   const [isVisible, setIsValueVisible] = useState(false);
 
@@ -44,7 +46,7 @@ export default function InputField({
         field: { value, onChange, onBlur },
         fieldState: { error },
       }) => (
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, disabled ? { opacity: 0.5 } : {}]}>
           <Text style={styles.label}>{label}</Text>
           <View
             style={{
@@ -61,6 +63,8 @@ export default function InputField({
               value={value}
               placeholder={placeholder}
               placeholderTextColor="#DFE0DF"
+              editable={!disabled}
+              selectTextOnFocus={!disabled}
               onChangeText={onChange}
               onBlur={onBlur}
             />
