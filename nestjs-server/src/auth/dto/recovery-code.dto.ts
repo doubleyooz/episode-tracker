@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class RecoverPasswordRequest {
+export class RecoveryCodeRequest {
   @IsDefined()
   @IsString()
   @IsNotEmpty()

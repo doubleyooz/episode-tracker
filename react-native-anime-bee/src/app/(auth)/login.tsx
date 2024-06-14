@@ -1,7 +1,7 @@
 import { View, ScrollView, Image, StyleSheet } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Redirect, router } from "expo-router";
+import { Redirect, Stack, router } from "expo-router";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
 import { loginSchema } from "@/src/utils/rules";
@@ -32,6 +32,7 @@ export default function LoginScreen() {
   if (token) return <Redirect href={"/"} />;
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
+      <Stack.Screen options={{ headerShown: false }} />
       <WelcomeHeader text="Welcome Back" />
       <View style={styles.inputContainer}>
         <InputField

@@ -3,12 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { User } from 'src/models/users/user.interface';
-import { RecoverPasswordRequest } from './dto/recover-password.dto';
+import { RecoveryCodeRequest } from './dto/recovery-code.dto';
 import { UserService } from 'src/models/users/user.service';
 import { SendGridClient } from 'src/common/email/sendgrid-client';
 import { MailDataRequired } from '@sendgrid/mail';
 import { ChangePasswordRequest } from './dto/change-password.dto';
 import { ActivateAccountRequest } from './dto/activate-account.dto';
+import { ChangeEmailRequest } from './dto/change-email.dto';
 
 export interface TokenPayload {
   userId: number;
@@ -42,7 +43,7 @@ export class AuthService {
     });
   }
 
-  async recoverPassword(request: RecoverPasswordRequest) {
+  async recoverPassword(request: RecoveryCodeRequest) {
     await this.userService.generateRecoveryCode(request.email);
 
     if (request.skipEmail) return { message: 'Recovery code sent' };
@@ -58,7 +59,7 @@ export class AuthService {
     };
   }
 
-  async activationCode(request: RecoverPasswordRequest) {
+  async activationCode(request: RecoveryCodeRequest) {
     await this.userService.generateRecoveryCode(request.email);
 
     if (request.skipEmail) return { message: 'Activation code sent' };
@@ -84,6 +85,18 @@ export class AuthService {
     );
 
     return { result, message: 'Password updated' };
+  }
+
+  async changeEmail(request: ChangeEmailRequest) {
+    // if it doesn't find it throws an exception
+    await this.userService.verifyRecoveryCode(request.email, request.code);
+
+    const { result } = await this.userService.updateEmail(
+      request.email,
+      request.newEmail,
+    );
+
+    return { result, message: 'Email updated' };
   }
 
   async verifyRecoveryCode(request: ActivateAccountRequest) {

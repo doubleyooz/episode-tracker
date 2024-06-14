@@ -29,6 +29,8 @@ export const loginSchema = z.object({
   password,
 });
 
+export const countdown = 360;
+
 export const resetPasswordSchema = z
   .object({
     confirmPassword,

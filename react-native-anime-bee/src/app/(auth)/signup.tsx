@@ -5,9 +5,6 @@ import {
   Image,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  ToastAndroid,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -19,7 +16,6 @@ import Label from "@/src/components/Label";
 import { Redirect, router } from "expo-router";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { signUp } from "@/src/services/auth";
-import Toast from "react-native-root-toast";
 import MyToast from "@/src/components/MyToast";
 import WelcomeHeader from "@/src/components/WelcomeHeader";
 

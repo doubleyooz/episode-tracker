@@ -11,6 +11,10 @@ const signIn = async (
   });
 };
 
+const getCurrentUser = async (): Promise<AxiosResponse<Response>> => {
+  return await api.get<Response>(`/auth/me`);
+};
+
 const signUp = async (email: string, username: string, password: string) => {
   const result = await api.post<Response>(`users`, {
     email: email,
@@ -18,14 +22,21 @@ const signUp = async (email: string, username: string, password: string) => {
     password: password,
   });
 
-  console.log({ result });
-
   return result;
 };
 const recoverPassword = async (
   email: string
 ): Promise<AxiosResponse<Response>> => {
   return await api.post<Response>(`auth/recover-password`, {
+    email: email,
+    skipEmail: true,
+  });
+};
+
+const recoverEmail = async (
+  email: string
+): Promise<AxiosResponse<Response>> => {
+  return await api.post<Response>(`auth/recover-email`, {
     email: email,
     skipEmail: true,
   });
@@ -40,6 +51,16 @@ const changePassword = async (
     email: email,
     code: code,
     password: password,
+  });
+};
+
+const changeEmail = async (
+  email: string,
+  code: string
+): Promise<AxiosResponse<Response>> => {
+  return await api.post<Response>(`auth/change-email`, {
+    email: email,
+    code: code,
   });
 };
 
@@ -77,7 +98,10 @@ export {
   signUp,
   activateAccount,
   activationCode,
+  getCurrentUser,
   recoverPassword,
+  changeEmail,
   changePassword,
   verifyCode,
+  recoverEmail,
 };

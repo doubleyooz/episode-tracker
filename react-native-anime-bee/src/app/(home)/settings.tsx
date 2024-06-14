@@ -1,17 +1,22 @@
-import { Redirect, Stack, router } from "expo-router";
+import { Redirect, Stack, router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 import { useAuth } from "@/src/contexts/AuthContext";
+import SettingsOption from "@/src/components/SettingsOption";
 
 export default function App() {
-  const { token } = useAuth();
-  console.log({ token });
+  const { token, user } = useAuth();
+  console.log({ config: token });
   if (!token) return <Redirect href={"/(auth)/login"} />;
   return (
     <View style={styles.titleContainer}>
-      <Stack.Screen options={{ title: "Username's home" }} />
-      <Text>Hello World</Text>
+      <Text>User's settings body</Text>
+      <SettingsOption
+        label={"Email"}
+        value={user ? user.email : "empty????"}
+        onPress={() => router.push("(home)/changeEmail")}
+      />
       <StatusBar style="auto" />
     </View>
   );
@@ -19,19 +24,11 @@ export default function App() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
   stepContainer: {
     gap: 8,
     marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
   },
 });

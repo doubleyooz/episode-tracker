@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { signIn } from "../services/auth";
+import { getCurrentUser, signIn } from "../services/auth";
+import { IUser } from "../services/user";
 
 interface AuthContextData {
   token: string;
   loading: boolean;
+  user: IUser | null;
+  setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
   setToken: React.Dispatch<React.SetStateAction<string>>;
   handleSignIn(email: string, password: string): Promise<void>;
 }
@@ -21,6 +24,7 @@ async function save(key: string, value: any) {
 
 export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
   const [token, setToken] = useState("");
+  const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,7 +33,16 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
       if (!oldToken) return;
       setToken(oldToken);
     };
+
+    const fetchStashedUser = async () => {
+      const result = await getCurrentUser();
+      const currentUser = (result.data as unknown as { result: IUser[] })
+        .result;
+      if (currentUser.length === 0) return;
+      setUser(currentUser[0]);
+    };
     fetchOldToken();
+    fetchStashedUser();
   }, [token]);
 
   async function handleSignIn(email: string, password: string) {
@@ -48,6 +61,8 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
 
   const value = {
     token,
+    setUser,
+    user,
     handleSignIn,
     setToken,
     loading,

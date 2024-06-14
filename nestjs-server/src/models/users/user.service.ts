@@ -138,6 +138,21 @@ export class UserService {
     return { result };
   }
 
+  async updateEmail(_email: string, _newEmail: string) {
+    const result = await this.drizzle
+      .update(schema.users)
+      .set({
+        email: _newEmail,
+        codeToValidate: null,
+        codeExpiration: null,
+      })
+      .where(and(eq(schema.users.email, _email), eq(schema.users.active, true)))
+      .returning({ email: schema.users.email });
+    if (result.length === 0)
+      throw new UnauthorizedException('Invalid credentials');
+    return { result };
+  }
+
   async activateAccount(_email: string) {
     const result = await this.drizzle
       .update(schema.users)

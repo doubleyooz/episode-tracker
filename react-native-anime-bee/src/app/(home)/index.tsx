@@ -6,12 +6,11 @@ import { useAuth } from "@/src/contexts/AuthContext";
 
 export default function App() {
   const { token } = useAuth();
-  console.log({ token });
   if (!token) return <Redirect href={"/(auth)/login"} />;
   return (
     <View style={styles.titleContainer}>
-      <Stack.Screen options={{ title: "Username's home" }} />
-      <Text>Hello World</Text>
+      <Stack.Screen options={{ title: "Username's profile idk" }} />
+      <Text>User's home</Text>
       <StatusBar style="auto" />
     </View>
   );

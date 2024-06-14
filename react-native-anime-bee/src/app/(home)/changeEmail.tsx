@@ -1,28 +1,55 @@
-import { View, ScrollView, Image, StyleSheet } from "react-native";
+import { View, ScrollView, Image, Text, StyleSheet } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Redirect, Stack, router } from "expo-router";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
-import { forgotSchema, codeSchema, countdown } from "@/src/utils/rules";
+import { codeSchema, countdown, forgotSchema } from "@/src/utils/rules";
 import Label from "@/src/components/Label";
-import { Redirect, Stack, router } from "expo-router";
+import { useAuth } from "@/src/contexts/AuthContext";
+import { changeEmail, recoverEmail } from "@/src/services/auth";
 import { useState } from "react";
 import Timer from "@/src/components/Countdown";
-import { useAuth } from "@/src/contexts/AuthContext";
-import {
-  changePassword,
-  recoverPassword,
-  verifyCode,
-} from "@/src/services/auth";
-import WelcomeHeader from "@/src/components/WelcomeHeader";
+import MyToast from "@/src/components/MyToast";
 
-export default function ForgotScreen() {
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [currentEmail, setCurrentEmail] = useState<string | null>(null);
+export default function ChangeEmail() {
+  const [newEmail, setNewEmail] = useState<string | null>(null);
   const [isInTimeout, setIsInTimeout] = useState(false);
 
-  const { token } = useAuth();
-  if (token) return <Redirect href={"/"} />;
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
+
+  const { user } = useAuth();
+
+  const sendEmail = async (email: string) => {
+    if (isInTimeout || !user) return;
+    try {
+      const result = await recoverEmail(user.email);
+      console.log({ result: result.data });
+      setNewEmail(email);
+      setIsInTimeout(true);
+    } catch (err: any) {
+      console.log({ err: err.response.data });
+      setShowErrorToast(true);
+    }
+  };
+
+  const validateCode = async (code: string) => {
+    try {
+      if (newEmail == null) return;
+
+      const result = await changeEmail(newEmail, code);
+      setIsInTimeout(false);
+      console.log({ validateCode: result.data });
+      setShowSuccessToast(true);
+      setShowErrorToast(false);
+      router.navigate("/(home)/settings");
+    } catch (err: any) {
+      setShowErrorToast(true);
+      setShowSuccessToast(false);
+      console.log({ err: err.response.data });
+    }
+  };
 
   const {
     control: emailControl,
@@ -46,40 +73,26 @@ export default function ForgotScreen() {
     resolver: zodResolver(codeSchema),
   });
 
-  const sendEmail = async (email: string) => {
-    if (isInTimeout) return;
-    await recoverPassword(email);
-    setCurrentEmail(email);
-    setIsInTimeout(true);
-  };
-
-  const validateCode = async (code: string) => {
-    try {
-      if (currentEmail == null) return;
-      setIsInTimeout(false);
-      const result = await verifyCode(currentEmail, code);
-      console.log({ result });
-      setIsChangingPassword(true);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
+  const { token } = useAuth();
+  console.log({ changeEmailToken: token });
+  if (!token) return <Redirect href={"/(auth)/login"} />;
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <WelcomeHeader text="Type in your email" width="45%" />
       <View style={styles.inputContainer}>
+        <Text style={[{ fontSize: 24, fontWeight: "600", marginBottom: 20 }]}>
+          {"What's your new Email?"}
+        </Text>
         <InputField
-          label={"Email"}
+          label={"New Email"}
           name={"email"}
           control={emailControl}
-          placeholder="Email"
+          placeholder="New Email"
           keyboardType="default"
-          disabled={!!currentEmail && isInTimeout}
+          disabled={isInTimeout}
           required
         />
-        {currentEmail && isInTimeout ? (
+
+        {newEmail && isInTimeout ? (
           <Timer
             text="Next attempt in"
             seconds={countdown}
@@ -97,7 +110,7 @@ export default function ForgotScreen() {
           />
         )}
 
-        {currentEmail && (
+        {newEmail && (
           <View style={{ display: "flex", rowGap: 24 }}>
             <InputField
               label={"Code"}
@@ -115,15 +128,9 @@ export default function ForgotScreen() {
             />
           </View>
         )}
-
-        <Label
-          text={"Don’t you have an account? Sign up"}
-          fontSize={16}
-          onPress={() => router.navigate("/(auth)/signup")}
-          disabled={false}
-          variant={"text"}
-        />
       </View>
+      <MyToast text="Account created" visible={showSuccessToast} />
+      <MyToast text="Request failed to send." visible={showErrorToast} />
     </ScrollView>
   );
 }
