@@ -86,6 +86,13 @@ export class AuthService {
     return { result, message: 'Password updated' };
   }
 
+  async verifyRecoveryCode(request: ActivateAccountRequest) {
+    return await this.userService.verifyRecoveryCode(
+      request.email,
+      request.code,
+    );
+  }
+
   async activateAccount(request: ActivateAccountRequest) {
     // if it doesn't find it throws an exception
     await this.userService.verifyRecoveryCode(request.email, request.code);

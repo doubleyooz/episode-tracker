@@ -41,6 +41,11 @@ export class AuthController {
     return await this.authService.changePassword(request);
   }
 
+  @Post('validate-code')
+  async validateCode(@Body() request: ActivateAccountRequest) {
+    return await this.authService.verifyRecoveryCode(request);
+  }
+
   @Post('activation-code')
   async generateActivationCode(@Body() request: RecoverPasswordRequest) {
     return await this.authService.activationCode(request);

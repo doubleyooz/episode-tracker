@@ -1,11 +1,13 @@
 import { View, ScrollView, Image, StyleSheet } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Redirect, router } from "expo-router";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
 import { loginSchema } from "@/src/utils/rules";
 import Label from "@/src/components/Label";
-import { router } from "expo-router";
+import { useAuth } from "@/src/contexts/AuthContext";
+import WelcomeHeader from "@/src/components/WelcomeHeader";
 
 export default function LoginScreen() {
   const { control, handleSubmit, formState } = useForm({
@@ -16,19 +18,21 @@ export default function LoginScreen() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async () => {
-    console.log("dsds");
-  };
+  const { handleSignIn, token } = useAuth();
 
+  const onSubmit = async (email: string, password: string) => {
+    try {
+      await handleSignIn(email, password);
+      router.navigate("/");
+    } catch (err: any) {
+      console.log({ err });
+      console.log({ err: err.response.data.message });
+    }
+  };
+  if (token) return <Redirect href={"/"} />;
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
-      <View
-        style={{ width: "30%", display: "flex", alignItems: "center", gap: 16 }}
-      >
-        <Image source={require("@/src/assets/images/logo.png")} />
-        <Label text="Welcome Back" uppercase fontSize={24} />
-      </View>
-
+      <WelcomeHeader text="Welcome Back" />
       <View style={styles.inputContainer}>
         <InputField
           label={"Email"}
@@ -51,7 +55,9 @@ export default function LoginScreen() {
 
         <CustomButton
           text={"Login"}
-          onPress={handleSubmit(onSubmit)}
+          onPress={handleSubmit(
+            async (data) => await onSubmit(data.email, data.password)
+          )}
           uppercase
           disabled={!formState.isValid}
         />
@@ -67,6 +73,7 @@ export default function LoginScreen() {
         <Label
           text={"Don’t you have an account? Sign up"}
           fontSize={16}
+          onPress={() => router.navigate("/(auth)/signup")}
           disabled={false}
           variant={"text"}
         />

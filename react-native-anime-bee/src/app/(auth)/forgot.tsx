@@ -5,15 +5,27 @@ import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
 import { forgotSchema, codeSchema } from "@/src/utils/rules";
 import Label from "@/src/components/Label";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { useState } from "react";
 import Timer from "@/src/components/Countdown";
+import { useAuth } from "@/src/contexts/AuthContext";
+import {
+  changePassword,
+  recoverPassword,
+  verifyCode,
+} from "@/src/services/auth";
+import WelcomeHeader from "@/src/components/WelcomeHeader";
 
 const countdown = 360;
 
 export default function ForgotScreen() {
-  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [currentEmail, setCurrentEmail] = useState<string | null>(null);
   const [isInTimeout, setIsInTimeout] = useState(false);
+
+  const { token } = useAuth();
+  if (token) return <Redirect href={"/"} />;
+
   const {
     control: emailControl,
     handleSubmit: handleEmailSubmit,
@@ -31,31 +43,33 @@ export default function ForgotScreen() {
     formState: codeFormState,
   } = useForm({
     defaultValues: {
-      email: "",
-      password: "",
+      code: "",
     },
-    resolver: zodResolver(forgotSchema),
+    resolver: zodResolver(codeSchema),
   });
 
-  const sendEmail = async () => {
+  const sendEmail = async (email: string) => {
     if (isInTimeout) return;
-    setIsEmailSent(true);
+    await recoverPassword(email);
+    setCurrentEmail(email);
     setIsInTimeout(true);
   };
 
-  const validateCode = async () => {
-    setIsInTimeout(false);
+  const validateCode = async (code: string) => {
+    try {
+      if (currentEmail == null) return;
+      setIsInTimeout(false);
+      const result = await verifyCode(currentEmail, code);
+      console.log({ result });
+      setIsChangingPassword(true);
+    } catch (err) {
+      console.log(err);
+    }
   };
-  console.log({ codeFormState });
+
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
-      <View
-        style={{ width: "45%", display: "flex", alignItems: "center", gap: 16 }}
-      >
-        <Image source={require("@/src/assets/images/logo.png")} />
-        <Label text="Type in your email" uppercase fontSize={24} />
-      </View>
-
+      <WelcomeHeader text="Type in your email" width="45%" />
       <View style={styles.inputContainer}>
         <InputField
           label={"Email"}
@@ -63,38 +77,40 @@ export default function ForgotScreen() {
           control={emailControl}
           placeholder="Email"
           keyboardType="default"
-          disabled={isEmailSent && isInTimeout}
+          disabled={!!currentEmail && isInTimeout}
           required
         />
-        {isEmailSent && isInTimeout ? (
+        {currentEmail && isInTimeout ? (
           <Timer
             text="Next attempt in"
             seconds={countdown}
             timerRunning={isInTimeout}
-            handleTimeUp={validateCode}
+            handleTimeUp={() => {
+              setIsInTimeout(false);
+            }}
           />
         ) : (
           <CustomButton
             text={"Send Instructions"}
-            onPress={handleEmailSubmit(sendEmail)}
+            onPress={handleEmailSubmit((data) => sendEmail(data.email))}
             uppercase
             disabled={!emailFormState.isValid}
           />
         )}
 
-        {isEmailSent && (
+        {currentEmail && (
           <View style={{ display: "flex", rowGap: 24 }}>
             <InputField
               label={"Code"}
               name={"code"}
               control={codeControl}
               placeholder="Code"
-              keyboardType="default"
+              keyboardType="decimal-pad"
               required
             />
             <CustomButton
               text={"Verify Code"}
-              onPress={handleCodeSubmit(validateCode)}
+              onPress={handleCodeSubmit((data) => validateCode(data.code))}
               uppercase
               disabled={!codeFormState.isValid}
             />
