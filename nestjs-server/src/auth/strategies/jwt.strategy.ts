@@ -25,7 +25,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(token: TokenPayload) {
     try {
-      return await this.usersService.findOneById(token.userId);
+      const { result } = await this.usersService.findOneById(token.userId);
+
+      return result[0];
     } catch (err) {
       console.log(err);
       throw new UnauthorizedException();

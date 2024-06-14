@@ -30,4 +30,10 @@ export class CreateUserRequest {
 
   @Exclude()
   active: boolean;
+
+  @Exclude()
+  codeToValidate: string;
+
+  @Exclude()
+  codeExpiration: string;
 }

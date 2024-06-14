@@ -4,10 +4,23 @@ import { api, config } from ".";
 export interface IUser {
   email: string;
   username: string;
+  active: boolean;
 }
 
-const findUsers = async (token: string): Promise<AxiosResponse<Response>> => {
-  return await api.get<Response>(`users`, { ...config(token) });
+export interface LooseIUser {
+  email?: string;
+  username?: string;
+  active?: boolean;
+}
+
+const findUsers = async (): Promise<AxiosResponse<Response>> => {
+  return await api.get<Response>(`users`);
 };
 
-export { findUsers };
+const updateUser = async (
+  data: LooseIUser
+): Promise<AxiosResponse<Response>> => {
+  return await api.put<Response>("users", data);
+};
+
+export { findUsers, updateUser };

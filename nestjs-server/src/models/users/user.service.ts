@@ -6,7 +6,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { SQLWrapper, and, eq, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as bcrypt from 'bcrypt';
 
@@ -14,6 +14,7 @@ import { DrizzleAsyncProvider } from '../../drizzle/drizzle.provider';
 import * as schema from '../../drizzle/schema';
 import { CreateUserRequest } from './dto/create-user.dto';
 import { IResponseBody } from 'src/common/interceptors/response.interceptor';
+import { UpdateUserRequest } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -42,6 +43,34 @@ export class UserService {
     }
   }
 
+  async updateUserByEmail(_email: string, data: UpdateUserRequest) {
+    const result = await this.drizzle
+      .update(schema.users)
+      .set({
+        ...data,
+      })
+      .where(and(eq(schema.users.email, _email)))
+      .returning({ email: schema.users.email });
+    if (result.length === 0)
+      throw new UnauthorizedException('Invalid credentials');
+    return { result };
+  }
+
+  async updateUserById(_id: number, data: UpdateUserRequest) {
+    const result = await this.drizzle
+      .update(schema.users)
+      .set({
+        ...data,
+      })
+      .where(and(eq(schema.users.id, _id)))
+      .returning({ email: schema.users.email });
+
+    console.log({ _id, data });
+    if (result.length === 0)
+      throw new UnauthorizedException('Invalid credentials');
+    return { result };
+  }
+
   async findAll() {
     const result = await this.drizzle
       .select({
@@ -53,28 +82,46 @@ export class UserService {
     return { result: result };
   }
 
-  async findOneById(_id: number) {
+  async findOneById(_id: number, _tokenVersion?: number) {
+    const conditions: SQLWrapper[] = [eq(schema.users.id, _id)];
+
+    // Only add tokenVersion condition if _tokenVersion is defined
+    if (_tokenVersion !== undefined) {
+      conditions.push(eq(schema.users.tokenVersion, _tokenVersion));
+      conditions.push(eq(schema.users.active, true));
+    }
+
     const result = await this.drizzle
       .select({
         id: schema.users.id,
         email: schema.users.email,
         username: schema.users.username,
+        active: schema.users.active,
       })
       .from(schema.users)
-      .where(eq(schema.users.id, _id));
+      .where(and(...conditions));
     if (result.length === 0) throw new NotFoundException('User not found');
     return { result: result };
   }
 
-  async findOneByEmail(_email: string) {
+  async findOneByEmail(_email: string, _tokenVersion?: number) {
+    const conditions: SQLWrapper[] = [eq(schema.users.email, _email)];
+
+    // Only add tokenVersion condition if _tokenVersion is defined
+    if (_tokenVersion !== undefined) {
+      conditions.push(eq(schema.users.tokenVersion, _tokenVersion));
+      conditions.push(eq(schema.users.active, true));
+    }
+
     const result = await this.drizzle
       .select({
         id: schema.users.id,
         email: schema.users.email,
         username: schema.users.username,
+        active: schema.users.active,
       })
       .from(schema.users)
-      .where(eq(schema.users.email, _email));
+      .where(and(...conditions));
     if (result.length === 0) throw new NotFoundException('User not found');
     return { result: result };
   }
@@ -172,6 +219,19 @@ export class UserService {
     await this.drizzle.delete(schema.users).where(eq(schema.users.id, _id));
 
     return { result: { id: _id } };
+  }
+
+  async revokeToken(_id: number) {
+    const result = await this.drizzle
+      .update(schema.users)
+      .set({
+        tokenVersion: sql`${schema.users.tokenVersion} + 1`,
+      })
+      .where(and(eq(schema.users.id, _id)))
+      .returning({ email: schema.users.email });
+    if (result.length === 0)
+      throw new UnauthorizedException('Invalid credentials');
+    return { result };
   }
 
   async validateUser(_email: string, _password: string) {

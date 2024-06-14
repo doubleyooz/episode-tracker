@@ -24,6 +24,10 @@ export const codeSchema = z.object({
   code,
 });
 
+export const changeUsernameSchema = z.object({
+  username,
+});
+
 export const loginSchema = z.object({
   email,
   password,

@@ -1,14 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { getCurrentUser, signIn } from "../services/auth";
+import { getCurrentUser, logout, signIn } from "../services/auth";
 import { IUser } from "../services/user";
 
 interface AuthContextData {
-  token: string;
+  token: string | null;
   loading: boolean;
   user: IUser | null;
+  handleSignout(): Promise<void>;
   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
-  setToken: React.Dispatch<React.SetStateAction<string>>;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
   handleSignIn(email: string, password: string): Promise<void>;
 }
 
@@ -23,7 +24,7 @@ async function save(key: string, value: any) {
 }
 
 export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -36,10 +37,10 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
 
     const fetchStashedUser = async () => {
       const result = await getCurrentUser();
-      const currentUser = (result.data as unknown as { result: IUser[] })
-        .result;
-      if (currentUser.length === 0) return;
-      setUser(currentUser[0]);
+      const currentUser = result.data as unknown as IUser;
+      console.log({ currentUser });
+      if (!currentUser) return;
+      setUser(currentUser);
     };
     fetchOldToken();
     fetchStashedUser();
@@ -59,11 +60,21 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
     setLoading(false);
   }
 
+  async function handleSignout() {
+    await logout();
+
+    SecureStore.deleteItemAsync("token");
+    setToken(null);
+    setUser(null);
+    setLoading(false);
+  }
+
   const value = {
     token,
     setUser,
     user,
     handleSignIn,
+    handleSignout,
     setToken,
     loading,
   };

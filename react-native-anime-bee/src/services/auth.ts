@@ -56,9 +56,11 @@ const changePassword = async (
 
 const changeEmail = async (
   email: string,
+  newEmail: string,
   code: string
 ): Promise<AxiosResponse<Response>> => {
   return await api.post<Response>(`auth/change-email`, {
+    newEmail: newEmail,
     email: email,
     code: code,
   });
@@ -93,9 +95,14 @@ const verifyCode = async (
   });
 };
 
+const logout = async (): Promise<AxiosResponse<Response>> => {
+  return await api.post<Response>(`auth/logout`);
+};
+
 export {
   signIn,
   signUp,
+  logout,
   activateAccount,
   activationCode,
   getCurrentUser,

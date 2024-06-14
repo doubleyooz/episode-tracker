@@ -4,19 +4,56 @@ import { Image, StyleSheet, Text, View } from "react-native";
 
 import { useAuth } from "@/src/contexts/AuthContext";
 import SettingsOption from "@/src/components/SettingsOption";
+import CustomButton from "@/src/components/CustomButton";
+import { logout } from "@/src/services/auth";
 
 export default function App() {
-  const { token, user } = useAuth();
+  const { token, user, setToken, setUser, handleSignout } = useAuth();
   console.log({ config: token });
   if (!token) return <Redirect href={"/(auth)/login"} />;
+
+  const signOut = async () => {
+    try {
+      await handleSignout();
+      router.push("/(auth)/login");
+    } catch (err: any) {
+      console.log(err.response);
+    }
+  };
+
   return (
-    <View style={styles.titleContainer}>
-      <Text>User's settings body</Text>
-      <SettingsOption
-        label={"Email"}
-        value={user ? user.email : "empty????"}
-        onPress={() => router.push("(home)/changeEmail")}
+    <View
+      style={{
+        display: "flex",
+        flex: 1,
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingVertical: 24,
+      }}
+    >
+      <View style={styles.titleContainer}>
+        <Text>User's settings body</Text>
+        <SettingsOption
+          label={"Email"}
+          value={user ? user.email : "empty????"}
+          disabled={user ? !user.active : true}
+          onPress={() => router.push("(home)/changeEmail")}
+        />
+        <SettingsOption
+          label={"Username"}
+          value={user ? user.username : "empty????"}
+          onPress={() => router.push("(home)/changeUsername")}
+        />
+      </View>
+
+      <CustomButton
+        text="Sign out"
+        outline
+        variant="error"
+        onPress={async () => await signOut()}
       />
+
       <StatusBar style="auto" />
     </View>
   );

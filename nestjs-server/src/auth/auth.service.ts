@@ -13,6 +13,7 @@ import { ChangeEmailRequest } from './dto/change-email.dto';
 
 export interface TokenPayload {
   userId: number;
+  tokenVersion: number;
 }
 
 @Injectable()
@@ -27,6 +28,7 @@ export class AuthService {
   async login(user: User, res: Response) {
     const tokenPayload: TokenPayload = {
       userId: user.id,
+      tokenVersion: user.tokenVersion,
     };
 
     const expires = new Date();
@@ -36,7 +38,7 @@ export class AuthService {
     );
 
     const token = this.jwtService.sign(tokenPayload);
-
+    console.log({ tokenPayload });
     res.cookie('jid', token, {
       httpOnly: true,
       expires,
@@ -115,7 +117,8 @@ export class AuthService {
     return { result, message: 'Account activated.' };
   }
 
-  logout(res: Response) {
+  async logout(user: User, res: Response) {
+    await this.userService.revokeToken(user.id);
     res.cookie('jid', '', {
       httpOnly: true,
       expires: new Date(),

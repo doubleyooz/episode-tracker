@@ -19,7 +19,7 @@ export default function ChangeEmail() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
 
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
   const sendEmail = async (email: string) => {
     if (isInTimeout || !user) return;
@@ -36,13 +36,14 @@ export default function ChangeEmail() {
 
   const validateCode = async (code: string) => {
     try {
-      if (newEmail == null) return;
+      if (newEmail == null || !user) return;
 
-      const result = await changeEmail(newEmail, code);
+      const result = await changeEmail(user?.email, newEmail, code);
       setIsInTimeout(false);
       console.log({ validateCode: result.data });
       setShowSuccessToast(true);
       setShowErrorToast(false);
+      setUser({ ...user, email: newEmail });
       router.navigate("/(home)/settings");
     } catch (err: any) {
       setShowErrorToast(true);
