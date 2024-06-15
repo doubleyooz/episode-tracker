@@ -47,6 +47,7 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
   }, [token]);
 
   async function handleSignIn(email: string, password: string) {
+    setLoading(true);
     const result = await signIn(email, password);
     if (!result?.headers["set-cookie"]) throw new Error("login failed");
 
@@ -61,6 +62,8 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
   async function handleSignout() {
+    setLoading(true);
+
     await logout();
 
     SecureStore.deleteItemAsync("token");

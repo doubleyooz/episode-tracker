@@ -41,7 +41,7 @@ export default function RootLayout() {
                       onPress={() => {
                         setShowSettings(false);
                         console.log("home");
-                        router.replace("/(home)");
+                        router.replace("/");
                       }}
                     />
                   ) : (

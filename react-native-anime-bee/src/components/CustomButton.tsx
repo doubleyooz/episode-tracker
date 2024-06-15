@@ -1,5 +1,5 @@
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import { Themes, ThemeType, ColorsType } from "../constants/Colors";
+import { Themes, ThemeType, ColorsType } from "@/src/constants/Colors";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onPress: () => any;

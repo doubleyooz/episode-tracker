@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldValues } from "react-hook-form";
 import {
   KeyboardTypeOptions,
   StyleSheet,
@@ -14,7 +14,7 @@ import { Themes, ThemeType, ColorsType } from "../constants/Colors";
 
 export interface InputFieldProps {
   required?: boolean;
-  control: any;
+  control: Control<FieldValues> | undefined;
   name: string;
   label: string;
   error?: string;
@@ -47,7 +47,10 @@ export default function InputField({
         fieldState: { error },
       }) => (
         <View style={[styles.inputContainer, disabled ? { opacity: 0.5 } : {}]}>
-          <Text style={styles.label}>{label}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <Text style={styles.label}>{label}</Text>
+            {required && <Text style={{ color: Themes[theme].error }}>*</Text>}
+          </View>
           <View
             style={{
               position: "relative",
@@ -60,7 +63,7 @@ export default function InputField({
               }}
               keyboardType={keyboardType}
               secureTextEntry={isPassword && !isVisible}
-              value={value}
+              defaultValue={value}
               placeholder={placeholder}
               placeholderTextColor="#DFE0DF"
               editable={!disabled}
