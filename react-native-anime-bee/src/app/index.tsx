@@ -6,6 +6,10 @@ import { useState } from "react";
 import { useAuth } from "@/src/contexts/AuthContext";
 import SearchBar from "@/src/components/Searchbar";
 import AnimeCard from "@/src/components/cards/Anime";
+import { Dimensions } from "react-native";
+
+const width = Dimensions.get("window").width; //full width
+const height = Dimensions.get("window").height; //full height
 
 export default function App() {
   const { token } = useAuth();
@@ -17,7 +21,7 @@ export default function App() {
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
       <Stack.Screen options={{ title: "Username's home" }} />
-      <View className="flex w-3/5 gap-12 mt-8 px-24">
+      <View className="flex mt-8 bg-green-200 px-6">
         <SearchBar
           search={search}
           onChange={(str: string) => setSearch(str)}
@@ -27,7 +31,16 @@ export default function App() {
           onPress={() => {}}
           title={"Title"}
           description={
-            "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
+            "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
+          }
+          draggable
+        />
+        <AnimeCard
+          onPress={() => {}}
+          title={"Title"}
+          variant="secondary"
+          description={
+            "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
           }
         />
         <Text>Hello World</Text>
@@ -41,12 +54,11 @@ export default function App() {
 const styles = StyleSheet.create({
   pageContainer: {
     flexDirection: "column",
-    alignItems: "center",
 
+    backgroundColor: "red",
     flex: 1,
     margin: 0,
     padding: 0,
     display: "flex",
-    width: "100%",
   },
 });
