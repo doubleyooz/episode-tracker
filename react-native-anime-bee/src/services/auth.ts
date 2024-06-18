@@ -12,7 +12,8 @@ const signIn = async (
 };
 
 const getCurrentUser = async (): Promise<AxiosResponse<Response>> => {
-  return await api.get<Response>(`/auth/me`);
+  console.log("here");
+  return await api.get<Response>(`auth/me`);
 };
 
 const signUp = async (email: string, username: string, password: string) => {
@@ -96,7 +97,7 @@ const verifyCode = async (
 };
 
 const logout = async (): Promise<AxiosResponse<Response>> => {
-  return await api.post<Response>(`auth/logout`);
+  return await api.post<Response>(`/auth/logout`);
 };
 
 export {

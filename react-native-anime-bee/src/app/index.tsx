@@ -13,16 +13,19 @@ const width = Dimensions.get("window").width; //full width
 const height = Dimensions.get("window").height; //full height
 
 export default function App() {
-  const { token } = useAuth();
-  console.log({ token });
+  const { token, user } = useAuth();
+  console.log({ token, user });
   if (!token) return <Redirect href={"/(auth)/login"} />;
 
   const [search, setSearch] = useState("");
 
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
-      <Stack.Screen options={{ title: "Username's home" }} />
-      <View className="flex mt-8 bg-green-200 px-6" style={{ rowGap: 24 }}>
+      <Stack.Screen options={{ title: `${user?.username}'s home` }} />
+      <View
+        className="flex pt-4 justify-center bg-green-200 px-6"
+        style={{ rowGap: 24 }}
+      >
         <SearchBar
           search={search}
           onChange={(str: string) => setSearch(str)}
@@ -34,6 +37,7 @@ export default function App() {
           description={
             "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
           }
+          dropdown
           itemsLength={0}
         />
         <ListCard

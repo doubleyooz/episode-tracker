@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
+import fastifyCookie from '@fastify/cookie';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -30,9 +30,12 @@ async function bootstrap() {
     AppModule,
     adapter,
   );
+
+  await app.register(fastifyCookie);
+
   const appConfig: ConfigService = app.get(ConfigService);
 
-  app.use(cookieParser());
+  // app.use(cookieParser());
 
   // app.enableCors({ origin: appConfig.get('CLIENT'), credentials: true });
 

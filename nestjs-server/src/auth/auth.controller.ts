@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 
-import { Response } from 'express';
+import { FastifyReply } from 'fastify';
 import { AuthService } from './auth.service';
 import JwtAuthGuard from './guards/jwt-auth.guard';
 import LocalAuthGuard from './guards/local-auth.guard';
@@ -19,10 +19,14 @@ export class AuthController {
   @Post('login')
   async login(
     @CurrentUser() user: User,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: FastifyReply,
   ) {
-    console.log('user', user);
-    await this.authService.login(user, res);
+    const { token, expires } = await this.authService.login(user);
+
+    res.setCookie('jid', token, {
+      httpOnly: true,
+      expires,
+    });
     res.send(user);
   }
 
@@ -30,9 +34,14 @@ export class AuthController {
   @Post('logout')
   async logout(
     @CurrentUser() user: User,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: FastifyReply,
   ) {
-    await this.authService.logout(user, res);
+    console.log('logout', user);
+    await this.authService.logout(user);
+    res.setCookie('jid', '', {
+      httpOnly: true,
+      expires: new Date(),
+    });
   }
 
   @Get('me')

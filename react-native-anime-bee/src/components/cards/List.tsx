@@ -5,6 +5,7 @@ import { useState } from "react";
 
 interface ListCardProps {
   onPress: () => any;
+  collapseAction?: () => any;
   title: string;
   description: string;
   theme?: ThemeType;
@@ -19,6 +20,7 @@ interface ListCardProps {
 const ListCard: React.FC<ListCardProps> = (props) => {
   const {
     onPress,
+    collapseAction = () => {},
     title,
     itemsLength,
     description,
@@ -30,6 +32,12 @@ const ListCard: React.FC<ListCardProps> = (props) => {
     outline = false,
   } = props;
   const [invertChevron, setInvertChevron] = useState(false);
+
+  const handleCollapse = () => {
+    collapseAction();
+    setInvertChevron(!invertChevron);
+  };
+
   if (expanded)
     return (
       <View
@@ -139,7 +147,7 @@ const ListCard: React.FC<ListCardProps> = (props) => {
               name={invertChevron ? "chevron-up" : "chevron-down"}
               size={24}
               color="black"
-              onPress={() => setInvertChevron(!invertChevron)}
+              onPress={() => handleCollapse()}
             />
           )}
         </View>

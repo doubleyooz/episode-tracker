@@ -37,13 +37,23 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
 
     const fetchStashedUser = async () => {
       const result = await getCurrentUser();
+
       const currentUser = result.data as unknown as IUser;
-      console.log({ currentUser });
+
       if (!currentUser) return;
       setUser(currentUser);
     };
-    fetchOldToken();
-    fetchStashedUser();
+    console.log("old token");
+    try {
+      fetchOldToken();
+
+      fetchStashedUser();
+    } catch (error) {
+      SecureStore.deleteItemAsync("token");
+      setToken(null);
+      setUser(null);
+      console.log({ error });
+    }
   }, [token]);
 
   async function handleSignIn(email: string, password: string) {
@@ -63,8 +73,9 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
 
   async function handleSignout() {
     setLoading(true);
-
-    await logout();
+    try {
+      await logout();
+    } catch (err) {}
 
     SecureStore.deleteItemAsync("token");
     setToken(null);

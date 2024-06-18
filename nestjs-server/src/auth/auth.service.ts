@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
 import { User } from 'src/models/users/user.interface';
 import { RecoveryCodeRequest } from './dto/recovery-code.dto';
 import { UserService } from 'src/models/users/user.service';
@@ -25,7 +24,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(user: User, res: Response) {
+  async login(user: User) {
     const tokenPayload: TokenPayload = {
       userId: user.id,
       tokenVersion: user.tokenVersion,
@@ -38,11 +37,8 @@ export class AuthService {
     );
 
     const token = this.jwtService.sign(tokenPayload);
-    console.log({ tokenPayload });
-    res.cookie('jid', token, {
-      httpOnly: true,
-      expires,
-    });
+
+    return { token, expires };
   }
 
   async recoverPassword(request: RecoveryCodeRequest) {
@@ -117,11 +113,7 @@ export class AuthService {
     return { result, message: 'Account activated.' };
   }
 
-  async logout(user: User, res: Response) {
+  async logout(user: User) {
     await this.userService.revokeToken(user.id);
-    res.cookie('jid', '', {
-      httpOnly: true,
-      expires: new Date(),
-    });
   }
 }
