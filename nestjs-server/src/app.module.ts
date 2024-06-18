@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { UserModule } from './models/users/user.module';
 import { AuthModule } from './auth/auth.module';
+import { AnimeModule } from './models/animes/anime.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -29,6 +30,7 @@ import { AuthModule } from './auth/auth.module';
 
     DrizzleModule,
     UserModule,
+    AnimeModule,
     AuthModule,
   ],
   controllers: [AppController],

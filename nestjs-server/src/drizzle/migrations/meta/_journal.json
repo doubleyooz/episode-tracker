@@ -29,6 +29,13 @@
       "when": 1718227472329,
       "tag": "0003_awesome_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1718588762579,
+      "tag": "0004_bitter_loners",
+      "breakpoints": true
     }
   ]
 }
