@@ -26,9 +26,9 @@ const AnimeCard: React.FC<AnimeCardProps> = (props) => {
     <TouchableOpacity
       className={`flex flex-row self-stretch ${
         variant === "primary"
-          ? `bg-${theme}-primary-500`
-          : `bg-${theme}-secondary-300`
-      } items-center min-w-[270px] px-3 h-24 overflow- rounded-lg`}
+          ? `bg-light-primary-500`
+          : `bg-light-secondary-300`
+      } items-center  min-w-[270px] px-3 h-24 overflow- rounded-lg`}
     >
       <Image
         className="w-[70px] h-[70px]"

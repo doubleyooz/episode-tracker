@@ -7,6 +7,7 @@ import { useAuth } from "@/src/contexts/AuthContext";
 import SearchBar from "@/src/components/Searchbar";
 import AnimeCard from "@/src/components/cards/Anime";
 import { Dimensions } from "react-native";
+import ListCard from "../components/cards/List";
 
 const width = Dimensions.get("window").width; //full width
 const height = Dimensions.get("window").height; //full height
@@ -21,19 +22,38 @@ export default function App() {
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
       <Stack.Screen options={{ title: "Username's home" }} />
-      <View className="flex mt-8 bg-green-200 px-6">
+      <View className="flex mt-8 bg-green-200 px-6" style={{ rowGap: 24 }}>
         <SearchBar
           search={search}
           onChange={(str: string) => setSearch(str)}
           onBlur={() => {}}
         />
-        <AnimeCard
+        <ListCard
           onPress={() => {}}
           title={"Title"}
           description={
             "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
           }
-          draggable
+          itemsLength={0}
+        />
+        <ListCard
+          onPress={() => {}}
+          title={"Title"}
+          description={
+            "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
+          }
+          expanded
+          itemsLength={0}
+        />
+        <ListCard
+          onPress={() => {}}
+          title={"Title"}
+          description={
+            "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
+          }
+          expanded
+          itemsLength={0}
+          username="username"
         />
         <AnimeCard
           onPress={() => {}}
