@@ -216,7 +216,10 @@ export class UserService {
   }
 
   async deleteById(_id: number) {
-    await this.drizzle.delete(schema.users).where(eq(schema.users.id, _id));
+    const result = await this.drizzle
+      .delete(schema.users)
+      .where(eq(schema.users.id, _id));
+    if (result.rowCount === 0) throw new NotFoundException('User Not Found');
 
     return { result: { id: _id } };
   }

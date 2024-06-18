@@ -35,6 +35,11 @@ export const animeRelations = relations(animes, ({ one }) => ({
     fields: [animes.userId],
     references: [users.id],
   }),
+
+  listId: one(lists, {
+    fields: [animes.userId],
+    references: [lists.id],
+  }),
 }));
 
 export const episodes = pgTable('episodes', {

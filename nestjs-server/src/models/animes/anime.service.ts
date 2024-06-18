@@ -88,7 +88,9 @@ export class AnimeService {
       .where(
         and(eq(schema.animes.userId, user_id), eq(schema.animes.id, anime_id)),
       );
-    console.log(result);
+    if (result.rowCount === 0)
+      throw new NotFoundException('Anime Not Found or Invalid Credentials');
+
     return { result };
   }
 }
