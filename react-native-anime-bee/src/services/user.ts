@@ -5,10 +5,12 @@ export interface IUser {
   email: string;
   username: string;
   active: boolean;
+  id: number;
 }
 
 export interface LooseIUser {
   email?: string;
+  id?: number;
   username?: string;
   active?: boolean;
 }

@@ -16,7 +16,7 @@ export interface LooseIList {
 }
 
 const findLists = async (userId: number): Promise<AxiosResponse<Response>> => {
-  return await api.get<Response>(`lists`);
+  return await api.get<Response>(`lists?userId=${userId}`);
 };
 
 const updateList = async (

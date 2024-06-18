@@ -1,82 +1,59 @@
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import { Themes, ThemeType, ColorsType } from "@/src/constants/Colors";
+import { TouchableOpacity, Text } from "react-native";
+import { ThemeType, ColorsType } from "@/src/constants/Colors";
+import { ReactNode } from "react";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface CustomButtomProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onPress: () => any;
-  text: string;
+  text?: string;
   uppercase?: boolean;
   theme?: ThemeType;
   variant?: ColorsType;
   disabled?: boolean;
   outline?: boolean;
+  rounded?: boolean;
+  icon?: ReactNode;
+  size?: "8" | "9" | "12" | "14";
 }
 
-const Button: React.FC<ButtonProps> = (props) => {
+const CustomButtom: React.FC<CustomButtomProps> = (props) => {
   const {
     onPress,
-    text,
+    text = "button",
     uppercase,
     disabled,
+    icon,
+    rounded,
     outline,
-    variant = "primary",
     theme = "light",
+    size = "14",
   } = props;
 
-  const colors = Themes[theme];
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        { backgroundColor: colors[variant] },
-        disabled ? { ...styles.disabled } : {},
+      className={` items-center justify-center h-${size}  ${
         outline
-          ? {
-              ...styles.outline,
-              borderColor: colors[variant],
-            }
-          : {},
-      ]}
+          ? `border border-primary-500 bg-transparent`
+          : `bg-${theme}-primary-500`
+      } ${disabled ? "opacity-50" : ""} ${
+        rounded ? `rounded-full w-${size}` : `rounded-s-2xl px-4 `
+      }`}
       onPress={onPress}
       disabled={disabled}
     >
-      <Text
-        style={[
-          styles.text,
-          { color: colors.text },
-          outline ? { color: colors[variant] } : {},
-        ]}
-      >
-        {uppercase ? text.toUpperCase() : text}
-      </Text>
+      {!icon && (
+        <Text
+          className={`text-base tracking-wider font-semibold ${
+            outline ? "text-${theme}-primary-500" : ""
+          }`}
+        >
+          {uppercase ? text.toUpperCase() : text}
+        </Text>
+      )}
+
+      {icon && icon}
     </TouchableOpacity>
   );
 };
 
-const styles = StyleSheet.create({
-  button: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 48,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-  },
-
-  outline: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-  },
-  disabled: {
-    opacity: 0.5,
-    backgroundColor: "#f5b849",
-  },
-
-  text: {
-    fontSize: 16,
-
-    letterSpacing: 0.5,
-    fontWeight: "600",
-  },
-});
-
-export default Button;
+export default CustomButtom;

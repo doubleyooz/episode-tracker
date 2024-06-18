@@ -43,6 +43,20 @@
       "when": 1718703993849,
       "tag": "0005_wandering_aaron_stack",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1718731186228,
+      "tag": "0006_lucky_trish_tilby",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1718731378937,
+      "tag": "0007_plain_shockwave",
+      "breakpoints": true
     }
   ]
 }

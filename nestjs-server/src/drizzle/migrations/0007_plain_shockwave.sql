@@ -1,0 +1,1 @@
+ALTER TABLE "animes" ALTER COLUMN "list_id" DROP NOT NULL;

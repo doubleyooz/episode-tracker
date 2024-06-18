@@ -90,6 +90,7 @@ export class ListService {
         description: schema.lists.description,
       })
       .from(schema.lists)
+      .innerJoin(schema.animes, eq(schema.animes.listId, schema.lists.id))
       .where(eq(schema.lists.id, _id));
     if (result.length === 0) throw new NotFoundException('List not found');
     return { result: result };

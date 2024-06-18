@@ -1,7 +1,10 @@
-import { Image, TouchableOpacity, Text, View } from "react-native";
+import { Image, TouchableOpacity, Text, View, FlatList } from "react-native";
 import { ThemeType, ColorsType } from "@/src/constants/Colors";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
+import { IAnime } from "@/src/services/anime";
+import AnimeCard from "./Anime";
+import CustomButtom from "../CustomButton";
 
 interface ListCardProps {
   onPress: () => any;
@@ -9,7 +12,7 @@ interface ListCardProps {
   title: string;
   description: string;
   theme?: ThemeType;
-  itemsLength: number;
+  items?: IAnime[];
   variant?: ColorsType;
   dropdown?: boolean;
   expanded?: boolean;
@@ -22,7 +25,7 @@ const ListCard: React.FC<ListCardProps> = (props) => {
     onPress,
     collapseAction = () => {},
     title,
-    itemsLength,
+    items = [],
     description,
     dropdown = false,
     variant = "primary",
@@ -31,11 +34,13 @@ const ListCard: React.FC<ListCardProps> = (props) => {
     username,
     outline = false,
   } = props;
-  const [invertChevron, setInvertChevron] = useState(false);
+
+  const [showItems, setShowItems] = useState(false);
 
   const handleCollapse = () => {
     collapseAction();
-    setInvertChevron(!invertChevron);
+    setShowItems(!showItems);
+    console.log({ showItems, dropdown });
   };
 
   if (expanded)
@@ -69,7 +74,7 @@ const ListCard: React.FC<ListCardProps> = (props) => {
               numberOfLines={3}
               ellipsizeMode="tail"
             >
-              {`${itemsLength} items`}
+              {`${items.length} items`}
             </Text>
           </View>
 
@@ -109,49 +114,76 @@ const ListCard: React.FC<ListCardProps> = (props) => {
       </View>
     );
   return (
-    <View
-      className={`flex self-stretch border ${
-        variant === "primary"
-          ? `border-${theme}-primary-500`
-          : `border-${theme}-secondary-300`
-      } items-center min-w-[270px] px-3 h-14 overflow-hidden rounded-lg`}
-    >
-      <View className={`flex flex-row items-center h-10 flex-1 ml-3 `}>
-        <Text
-          className={`text-base h-[18px]  tracking-wider font-semibold text-${theme}-text`}
-          numberOfLines={1}
-          ellipsizeMode="head"
-        >
-          {title}
-        </Text>
-        <View
-          className="flex flex-row flex-1 h-10 items-center px-8"
-          style={{ columnGap: 2 }}
-        >
+    <View className="flex flex-col">
+      <View
+        className={`flex self-stretch border ${
+          variant === "primary"
+            ? `border-${theme}-primary-500`
+            : `border-${theme}-secondary-300`
+        } items-center min-w-[270px] px-3 h-14 overflow-hidden rounded-lg`}
+      >
+        <View className={`flex flex-row items-center h-10 flex-1 ml-3 `}>
           <Text
-            className={`text-xs text-${theme}-text`}
-            numberOfLines={2}
-            ellipsizeMode="tail"
+            className={`text-base h-[18px]  tracking-wider font-semibold text-${theme}-text`}
+            numberOfLines={1}
+            ellipsizeMode="head"
           >
-            {description}
+            {title}
           </Text>
-          <Text
-            className={`text-sm text-${theme}-text`}
-            numberOfLines={2}
-            ellipsizeMode="tail"
+          <View
+            className="flex flex-row flex-1 h-10 items-center px-8"
+            style={{ columnGap: 2 }}
           >
-            {`(${itemsLength})`}
-          </Text>
-          {dropdown && (
-            <Entypo
-              name={invertChevron ? "chevron-up" : "chevron-down"}
-              size={24}
-              color="black"
-              onPress={() => handleCollapse()}
-            />
-          )}
+            <Text
+              className={`text-xs text-${theme}-text`}
+              numberOfLines={2}
+              ellipsizeMode="tail"
+            >
+              {description}
+            </Text>
+            <Text
+              className={`text-sm text-${theme}-text`}
+              numberOfLines={2}
+              ellipsizeMode="tail"
+            >
+              {`(${items.length})`}
+            </Text>
+            {dropdown && (
+              <Entypo
+                name={showItems ? "chevron-up" : "chevron-down"}
+                size={24}
+                color="black"
+                onPress={() => handleCollapse()}
+              />
+            )}
+          </View>
         </View>
       </View>
+      {dropdown && showItems && (
+        <View style={{ rowGap: 4, marginLeft: 20 }}>
+          <FlatList
+            contentContainerStyle={{ rowGap: 4 }}
+            data={items}
+            renderItem={({ item, index }) => (
+              <AnimeCard
+                onPress={() => {}}
+                title={item.title}
+                variant={index % 2 === 0 ? "primary" : "secondary"}
+                description={item.description}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
+          <View className="flex flex-row justify-center align-center ">
+            <CustomButtom
+              icon={<Entypo name="plus" size={30} color="black" />}
+              onPress={() => console.log("create new anime")}
+              rounded
+              outline
+            />
+          </View>
+        </View>
+      )}
     </View>
   );
 };

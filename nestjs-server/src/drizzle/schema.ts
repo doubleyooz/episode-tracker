@@ -27,6 +27,8 @@ export const animes = pgTable('animes', {
   userId: integer('user_id')
     .notNull()
     .references(() => users.id),
+
+  listId: integer('list_id').references(() => lists.id),
   finished: boolean('finished').default(false),
 });
 
@@ -37,7 +39,7 @@ export const animeRelations = relations(animes, ({ one }) => ({
   }),
 
   listId: one(lists, {
-    fields: [animes.userId],
+    fields: [animes.listId],
     references: [lists.id],
   }),
 }));
@@ -71,11 +73,12 @@ export const lists = pgTable('lists', {
     .references(() => users.id),
 });
 
-export const listsRelations = relations(lists, ({ one }) => ({
+export const listsRelations = relations(lists, ({ one, many }) => ({
   userId: one(users, {
     fields: [lists.userId],
     references: [users.id],
   }),
+  animes: many(animes),
 }));
 
 export const reviews = pgTable('reviews', {
