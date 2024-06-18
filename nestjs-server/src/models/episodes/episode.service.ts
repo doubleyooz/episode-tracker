@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { SQLWrapper, and, eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
@@ -13,6 +13,7 @@ import * as schema from 'src/drizzle/schema';
 import { IResponseBody } from 'src/common/interceptors/response.interceptor';
 import { CreateEpisodeRequest } from './dto/create-episode.dto';
 import { UpdateEpisodeRequest } from './dto/update-episode.dto';
+import { FindEpisodeRequest } from './dto/find-episode.dto';
 
 const EPISODE_PROJECTION = {
   id: schema.episodes.id,
@@ -90,7 +91,20 @@ export class EpisodeService {
     return { result };
   }
 
-  async findAll() {
+  async findAll(_filter: FindEpisodeRequest) {
+    const conditions: SQLWrapper[] = [];
+
+    // Only add tokenVersion condition if _tokenVersion is defined
+    if (_filter !== undefined) {
+      if (_filter.description)
+        conditions.push(eq(schema.episodes.description, _filter.description));
+      if (_filter.title)
+        conditions.push(eq(schema.episodes.title, _filter.title));
+      if (_filter.animeId)
+        conditions.push(eq(schema.episodes.animeId, _filter.animeId));
+      if (_filter.id) conditions.push(eq(schema.episodes.id, _filter.id));
+    }
+
     const result = await this.drizzle
       .select({
         id: schema.episodes.id,
@@ -98,7 +112,8 @@ export class EpisodeService {
         description: schema.episodes.description,
         finished: schema.episodes.finished,
       })
-      .from(schema.episodes);
+      .from(schema.episodes)
+      .where(and(...conditions));
     return { result };
   }
 

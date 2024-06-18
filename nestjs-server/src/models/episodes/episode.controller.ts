@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -19,6 +20,7 @@ import { User } from 'src/models/users/user.interface';
 import { EpisodeService } from './episode.service';
 import { CreateEpisodeRequest } from './dto/create-episode.dto';
 import { UpdateEpisodeRequest } from './dto/update-episode.dto';
+import { FindEpisodeRequest } from './dto/find-episode.dto';
 
 @UseInterceptors(ResponseInterceptor)
 @Controller('episodes')
@@ -42,8 +44,8 @@ export class EpisodeController {
   }
 
   @Get()
-  findAll() {
-    return this.episodeService.findAll();
+  findAll(@Query() filter: FindEpisodeRequest) {
+    return this.episodeService.findAll(filter);
   }
 
   @Get(':id')

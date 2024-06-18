@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -19,6 +20,7 @@ import { User } from 'src/models/users/user.interface';
 import { ListService } from './list.service';
 import { CreateListRequest } from './dto/create-list.dto';
 import { UpdateListRequest } from './dto/update-list.dto';
+import { FindListRequest } from './dto/find-list.dto';
 
 @UseInterceptors(ResponseInterceptor)
 @Controller('lists')
@@ -40,8 +42,8 @@ export class ListController {
   }
 
   @Get()
-  findAll() {
-    return this.listService.findAll();
+  findAll(@Query() filter: FindListRequest) {
+    return this.listService.findAll(filter);
   }
 
   @Get(':id')

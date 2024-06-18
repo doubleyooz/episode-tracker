@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { SQLWrapper, and, eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
@@ -13,6 +13,7 @@ import * as schema from 'src/drizzle/schema';
 import { IResponseBody } from 'src/common/interceptors/response.interceptor';
 import { CreateListRequest } from './dto/create-list.dto';
 import { UpdateListRequest } from './dto/update-list.dto';
+import { FindListRequest } from './dto/find-list.dto';
 
 @Injectable()
 export class ListService {
@@ -56,14 +57,28 @@ export class ListService {
     return { result };
   }
 
-  async findAll() {
+  async findAll(_filter: FindListRequest) {
+    const conditions: SQLWrapper[] = [];
+
+    // Only add tokenVersion condition if _tokenVersion is defined
+    if (_filter !== undefined) {
+      if (_filter.description)
+        conditions.push(eq(schema.lists.description, _filter.description));
+      if (_filter.title) conditions.push(eq(schema.lists.title, _filter.title));
+      if (_filter.userId)
+        conditions.push(eq(schema.lists.userId, _filter.userId));
+      if (_filter.id) conditions.push(eq(schema.lists.id, _filter.id));
+    }
+
     const result = await this.drizzle
       .select({
         id: schema.lists.id,
         title: schema.lists.title,
         description: schema.lists.description,
       })
-      .from(schema.lists);
+
+      .from(schema.lists)
+      .where(and(...conditions));
     return { result: result };
   }
 
