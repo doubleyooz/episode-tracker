@@ -9,6 +9,7 @@ import { UserModule } from './models/users/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AnimeModule } from './models/animes/anime.module';
 import { ListModule } from './models/lists/list.module';
+import { EpisodeModule } from './models/episodes/episode.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -32,6 +33,7 @@ import { ListModule } from './models/lists/list.module';
     DrizzleModule,
     UserModule,
     ListModule,
+    EpisodeModule,
     AnimeModule,
     AuthModule,
   ],

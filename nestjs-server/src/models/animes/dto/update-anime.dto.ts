@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
 import {
   IsBoolean,
+  IsDefined,
   IsNumber,
   IsOptional,
   IsString,
@@ -10,30 +11,18 @@ import {
 import { Anime } from '../anime.interface';
 
 export class UpdateAnimeRequest {
-  @ValidateIf(
-    (o) =>
-      !o.description || !o.studio || (o as Anime).hasOwnProperty('finished'),
-  )
   @IsOptional()
   @IsString()
   title: string;
 
-  @ValidateIf(
-    (o) => !o.title || !o.studio || (o as Anime).hasOwnProperty('finished'),
-  )
   @IsOptional()
   @IsString()
   description: string;
 
-  @ValidateIf(
-    (o) =>
-      !o.title || !o.description || (o as Anime).hasOwnProperty('finished'),
-  )
   @IsOptional()
   @IsString()
   studio: string;
 
-  @ValidateIf((o) => !o.title || !o.description || !o.studio)
   @IsOptional()
   @IsBoolean()
   finished: boolean;
@@ -44,4 +33,14 @@ export class UpdateAnimeRequest {
 
   @Exclude()
   userId: number;
+
+  // Check at least one is provided
+  @ValidateIf(
+    (o: Anime) => !o.finished && !o.description && !o.studio && !o.title,
+  )
+  @IsDefined({
+    message:
+      "At least one of ['finished', 'description', 'studio', 'title'] must be provided",
+  })
+  protected readonly checkAtLeastOne: undefined;
 }

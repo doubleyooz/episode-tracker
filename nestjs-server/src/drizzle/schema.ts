@@ -46,7 +46,9 @@ export const episodes = pgTable('episodes', {
   id: serial('id').primaryKey(),
   title: text('title'),
   description: text('description'),
-  stoppedAt: date('stoppedAt'),
+  stoppedAtHours: integer('stoppedAtHours'),
+  stoppedAtMinutes: integer('stoppedAtMinutes'),
+  stoppedAtSeconds: integer('stoppedAtSeconds'),
   animeId: integer('anime_id')
     .notNull()
     .references(() => animes.id),
