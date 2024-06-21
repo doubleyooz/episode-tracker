@@ -22,6 +22,7 @@ import AnimeDropdown from "../components/AnimeDropdown";
 
 import tw from "@/src/constants/tailwind";
 import RoundedButton from "../components/buttons/RoundedButton";
+import { useList } from "../contexts/ListContext";
 
 export default function App() {
   const { token, user, handleSignout } = useAuth();
@@ -31,6 +32,8 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [lists, setLists] = useState<IList[]>([]);
   const [animes, setAnimes] = useState<IAnime[]>([]);
+
+  const { setList } = useList();
 
   useEffect(() => {
     const fetchLists = async () => {
@@ -69,17 +72,21 @@ export default function App() {
             data={lists}
             renderItem={({ item, index }) => (
               <ListCard
-                onPress={() => {}}
+                onPress={() => {
+                  setList(item);
+                  router.navigate("/(home)/list");
+                }}
                 title={item.title}
                 description={item.description}
                 items={[]}
-                dropdown
               />
             )}
             keyExtractor={(item) => item.id.toString()}
           />
         )}
-        <RoundedButton action={() => router.navigate("/(home)/createList")} />
+        <RoundedButton
+          action={() => router.navigate("/(home)/list/createList")}
+        />
         <Text style={tw`text-base tracking-wider`}>My animes</Text>
         <AnimeDropdown
           addAction={() => router.navigate("/(home)/anime/createAnime")}

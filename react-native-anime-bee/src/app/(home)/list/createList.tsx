@@ -28,7 +28,7 @@ export default function ChangeEmail() {
   const { user, setUser } = useAuth();
 
   const { token } = useAuth();
-  console.log({ createAnime: token });
+
   if (!token) return <Redirect href={"/(auth)/login"} />;
 
   const onSubmit = async (
@@ -39,14 +39,9 @@ export default function ChangeEmail() {
     try {
       console.log({
         title,
-
         description,
       });
-      const result = await createList(
-        title,
-
-        description
-      );
+      const result = await createList(title, description);
 
       router.back();
     } catch (err: any) {

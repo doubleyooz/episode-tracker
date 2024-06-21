@@ -1,4 +1,10 @@
-import { Image, TouchableOpacity, Text, View, FlatList } from "react-native";
+import {
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  Text,
+  View,
+  FlatList,
+} from "react-native";
 import { ColorsType } from "@/src/constants/Colors";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -36,23 +42,27 @@ const ListCard: React.FC<ListCardProps> = (props) => {
   } = props;
 
   const [showItems, setShowItems] = useState(false);
-
+  const [isExpanded, setIsExpanded] = useState(expanded);
   const handleCollapse = () => {
     collapseAction();
     setShowItems(!showItems);
     console.log({ showItems, dropdown });
   };
 
-  if (expanded)
+  if (isExpanded)
     return (
-      <View
+      <TouchableOpacity
+        onPress={() => {
+          setIsExpanded(!isExpanded);
+          onPress();
+        }}
         style={tw`flex self-stretch  ${
           variant === "primary"
             ? `border-primary-500 bg-primary-500`
             : `border-secondary-300 bg-secondary-300`
         } ${
           outline ? "border bg-transparent" : "border-none"
-        } items-center min-w-[270px] px-3 pb-3 h-36 overflow-hidden rounded-lg`}
+        } min-w-[270px] px-3 pb-3 h-36 overflow-hidden rounded-lg`}
       >
         <View style={[tw`flex items-start flex-1 h-20 mt-4`, { rowGap: 19 }]}>
           <View style={[tw`flex flex-row items-center`, { columnGap: 10 }]}>
@@ -104,11 +114,14 @@ const ListCard: React.FC<ListCardProps> = (props) => {
             </View>
           )}
         </View>
-      </View>
+      </TouchableOpacity>
     );
   return (
     <View style={tw`flex flex-col`}>
-      <View
+      <TouchableWithoutFeedback
+        onPress={() => {
+          setIsExpanded(!isExpanded);
+        }}
         style={tw`flex self-stretch relative border ${
           variant === "primary" ? `border-primary-500` : `border-secondary-300`
         } items-center min-w-[270px] px-3 h-14 overflow-hidden rounded-lg`}
@@ -157,7 +170,7 @@ const ListCard: React.FC<ListCardProps> = (props) => {
             </View>
           </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
       {dropdown && showItems && (
         <AnimeDropdown
           addAction={() => console.log("add anime")}
