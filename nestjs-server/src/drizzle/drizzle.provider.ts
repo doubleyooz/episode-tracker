@@ -11,13 +11,9 @@ export const DrizzleProvider = [
     provide: DrizzleAsyncProvider,
     inject: [ConfigService],
     useFactory: async (configService: ConfigService) => {
-      const database = configService.get<string>('POSTGRES_DATABASE');
-      const user = configService.get<string>('POSTGRES_USER');
-      const password = configService.get<string>('POSTGRES_PASSWORD');
-      const port = configService.get<number>('POSTGRES_PORT');
-      const host = configService.get<string>('POSTGRES_HOST');
+      const db_url = configService.get<string>('POSTGRES_URL');
       const pool = new Pool({
-        connectionString: `postgres://${user}:${password}@${host}:${port}/${database}`,
+        connectionString: db_url,
       });
 
       return drizzle(pool, { schema });
