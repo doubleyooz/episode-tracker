@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
     const [, token] = result.headers["set-cookie"][0]
       .split("; ")[0]
       .split("jid=");
-
+    console.log({ newtoken: token });
     if (!token) throw new Error("login failed");
     save("token", token);
     setToken(token);
@@ -75,7 +75,9 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
     setLoading(true);
     try {
       await logout();
-    } catch (err) {}
+    } catch (err: any) {
+      console.log(err.response);
+    }
 
     SecureStore.deleteItemAsync("token");
     setToken(null);

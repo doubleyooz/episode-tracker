@@ -7,7 +7,7 @@ import {
   TextInput,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FieldValues, useForm } from "react-hook-form";
 import { useState } from "react";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
@@ -23,7 +23,7 @@ export default function LoginScreen() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
 
-  const { control, handleSubmit, formState } = useForm({
+  const { control, handleSubmit, formState } = useForm<FieldValues>({
     defaultValues: {
       email: "",
       username: "",

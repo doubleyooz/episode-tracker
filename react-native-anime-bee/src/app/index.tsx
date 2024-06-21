@@ -13,34 +13,24 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/src/contexts/AuthContext";
 import SearchBar from "@/src/components/Searchbar";
-import AnimeCard from "@/src/components/cards/Anime";
-import { Dimensions } from "react-native";
-import ListCard from "../components/cards/List";
-import { findLists } from "../services/list";
-import CustomButtom from "../components/CustomButton";
-import { Entypo } from "@expo/vector-icons";
-import { IAnime } from "../services/anime";
 
-const width = Dimensions.get("window").width; //full width
-const height = Dimensions.get("window").height; //full height
+import ListCard from "../components/cards/List";
+import { IList, findLists } from "../services/list";
+import CustomButtom from "../components/CustomButton";
+
+import { IAnime } from "../services/anime";
+import AnimeDropdown from "../components/AnimeDropdown";
+
+import tw from "@/src/constants/tailwind";
 
 export default function App() {
-  const { token, user } = useAuth();
+  const { token, user, handleSignout } = useAuth();
   console.log({ token, user });
   if (!token) return <Redirect href={"/(auth)/login"} />;
 
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    const fetchLists = async () => {
-      const listResults = (await findLists(user?.id as number)).data;
-      console.log({ listResults });
-    };
-
-    fetchLists();
-  }, []);
-
-  const animes: IAnime[] = [
+  const [lists, setLists] = useState<IList[]>([]);
+  const [animes, setAnimes] = useState<IAnime[]>([
     {
       id: 2,
       title: "title",
@@ -60,21 +50,29 @@ export default function App() {
       studio: "studio",
       description: "dsadasdasd",
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    const fetchLists = async () => {
+      const listResults = (await findLists(user?.id as number)).data;
+      console.log({ listResults });
+    };
+
+    fetchLists();
+  }, []);
 
   return (
     <SafeAreaView style={[styles.pageContainer]}>
       <Stack.Screen options={{ title: `${user?.username}'s home` }} />
       <View
-        className="flex pt-4 justify-center bg-green-200 px-6"
-        style={{ rowGap: 24 }}
+        style={[tw`flex pt-4 justify-center bg-green-200 px-6`, { rowGap: 24 }]}
       >
         <SearchBar
           search={search}
           onChange={(str: string) => setSearch(str)}
           onBlur={() => {}}
         />
-        <Text className="text-base tracking-wider">My lists</Text>
+        <Text style={tw`text-base tracking-wider`}>My lists</Text>
         <ListCard
           onPress={() => {}}
           title={"Title"}
@@ -95,7 +93,11 @@ export default function App() {
           items={[]}
         />
 
-        <Text className="text-base tracking-wider">My animes</Text>
+        <Text style={tw`text-base tracking-wider`}>My animes</Text>
+        <AnimeDropdown
+          addAction={() => router.navigate("/(home)/createAnime")}
+          items={animes}
+        />
       </View>
 
       <StatusBar style="auto" />

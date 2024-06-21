@@ -1,12 +1,11 @@
 import { Image, TouchableOpacity, Text, View } from "react-native";
-import { ThemeType, ColorsType } from "@/src/constants/Colors";
+import { ColorsType } from "@/src/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
-
+import tw from "@/src/constants/tailwind";
 interface AnimeCardProps {
   onPress: () => any;
   title: string;
   description: string;
-  theme?: ThemeType;
   variant?: ColorsType;
   draggable?: boolean;
 }
@@ -19,34 +18,31 @@ const AnimeCard: React.FC<AnimeCardProps> = (props) => {
     description,
     draggable = false,
     variant = "primary",
-    theme = "light",
   } = props;
 
   return (
     <TouchableOpacity
-      className={`flex flex-row self-stretch ${
-        variant === "primary"
-          ? `bg-light-primary-500`
-          : `bg-light-secondary-300`
-      } items-center  min-w-[270px] px-3 h-24 overflow- rounded-lg`}
+      style={tw`flex flex-row self-stretch ${
+        variant === "primary" ? `bg-primary-500` : `bg-secondary-300`
+      } items-center  min-w-[270px] px-3 h-24 overflow-hidden rounded-lg`}
     >
       <Image
-        className="w-[70px] h-[70px]"
+        style={tw`w-[70px] h-[70px]`}
         source={{
           uri: "https://reactnative.dev/img/tiny_logo.png",
         }}
       />
-      <View className={`flex flex-row items-center flex-1 ml-3`}>
-        <View className="h-20">
+      <View style={tw`flex flex-row items-center flex-1 ml-3`}>
+        <View style={tw`h-20`}>
           <Text
-            className={`text-base h-[18px] tracking-wider font-semibold text-${theme}-text`}
+            style={tw`text-base h-[18px] tracking-wider font-semibold text-black`}
             numberOfLines={1}
             ellipsizeMode="head"
           >
             {title}
           </Text>
           <Text
-            className={`text-sm h-[58px] text-${theme}-text`}
+            style={tw`text-sm h-[58px] text-black`}
             numberOfLines={3}
             ellipsizeMode="tail"
           >

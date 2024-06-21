@@ -241,6 +241,7 @@ export class UserService {
     const user = await this.drizzle.query.users.findFirst({
       where: eq(schema.users.email, _email),
     });
+    if (!user) throw new UnauthorizedException('Credentials are not valid');
     const isValidPassword = await bcrypt.compare(_password, user.password);
     if (!isValidPassword)
       throw new UnauthorizedException('Credentials are not valid');

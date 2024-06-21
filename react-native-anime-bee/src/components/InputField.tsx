@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 
-import { Themes, ThemeType, ColorsType } from "../constants/Colors";
+import tw from "@/src/constants/tailwind";
 
 export interface InputFieldProps {
   required?: boolean;
@@ -20,8 +20,9 @@ export interface InputFieldProps {
   error?: string;
   isPassword?: boolean;
   disabled?: boolean;
+  multiline?: boolean;
   placeholder: string;
-  theme?: ThemeType;
+  numberOfLines?: number;
   keyboardType: KeyboardTypeOptions;
 }
 
@@ -30,13 +31,16 @@ export default function InputField({
   control,
   name,
   label,
-  theme = "light",
   placeholder,
   isPassword,
+  multiline,
+  numberOfLines = 1,
   keyboardType,
   disabled = false,
 }: InputFieldProps) {
   const [isVisible, setIsValueVisible] = useState(false);
+
+  const fieldHeight = numberOfLines > 1 ? {} : { height: 56 };
 
   return (
     <Controller
@@ -46,33 +50,48 @@ export default function InputField({
         field: { value, onChange, onBlur },
         fieldState: { error },
       }) => (
-        <View style={[styles.inputContainer, disabled ? { opacity: 0.5 } : {}]}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-            <Text style={styles.label}>{label}</Text>
-            {required && <Text style={{ color: Themes[theme].error }}>*</Text>}
+        <View
+          style={[
+            tw`flex text-base`,
+            { rowGap: 6 },
+            disabled ? { opacity: 0.5 } : {},
+          ]}
+        >
+          <View style={[tw`flex flex-row items-center`, { columnGap: 4 }]}>
+            <Text style={[tw`text-base font-semibold leading-5 text-black`]}>
+              {label}
+            </Text>
+            {required && <Text style={tw`text-red-500`}>*</Text>}
           </View>
-          <View
-            style={{
-              position: "relative",
-            }}
-          >
+          <View style={tw`relative`}>
             <TextInput
-              style={{
-                ...styles.input,
-                ...(error ? { borderColor: Themes[theme].error } : {}),
-              }}
+              style={[
+                tw`px-4 border-[2px] rounded-lg ${
+                  error
+                    ? "border-red-500"
+                    : "border-[#DFE0DD] dark:border-gray-300"
+                } text-black dark:text-white bg-white dark:bg-black`,
+                fieldHeight,
+              ]}
               keyboardType={keyboardType}
               secureTextEntry={isPassword && !isVisible}
               defaultValue={value}
               placeholder={placeholder}
-              placeholderTextColor="#DFE0DF"
+              placeholderTextColor="#DFE0DD"
               editable={!disabled}
               selectTextOnFocus={!disabled}
+              multiline={multiline}
+              numberOfLines={numberOfLines}
               onChangeText={onChange}
               onBlur={onBlur}
             />
             {isPassword && (
-              <View style={styles.hideIconContainer}>
+              <View
+                style={[
+                  tw`absolute flex items-center justify-center right-4 top-0`,
+                  fieldHeight,
+                ]}
+              >
                 <TouchableOpacity onPress={() => setIsValueVisible(!isVisible)}>
                   {isVisible ? (
                     <Ionicons
@@ -89,14 +108,14 @@ export default function InputField({
           </View>
 
           {error && (
-            <View style={{ ...styles.errorContainer }}>
+            <View style={tw`flex flex-row`}>
               <Text
-                style={{
-                  color: "red",
-                  fontSize: 11,
-                  marginTop: -1,
-                  marginLeft: 2,
-                }}
+                style={[
+                  tw`text-red-500 ml-0.5 text-[11px]`,
+                  {
+                    marginTop: -1,
+                  },
+                ]}
               >
                 {`${error.message} ${console.log({ error })}`}
               </Text>
@@ -107,40 +126,3 @@ export default function InputField({
     />
   );
 }
-
-const styles = StyleSheet.create({
-  errorContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-
-  inputContainer: {
-    display: "flex",
-    rowGap: 6,
-  },
-  label: {
-    fontSize: 16,
-    color: "#000",
-    lineHeight: 20,
-    fontWeight: "600",
-  },
-  input: {
-    height: 56,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    borderWidth: 2,
-    fontSize: 16,
-    borderColor: "#DFE0DF",
-    backgroundColor: "white",
-    color: "#000",
-  },
-  hideIconContainer: {
-    position: "absolute",
-    height: 56,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    right: 16,
-    top: 0,
-  },
-});

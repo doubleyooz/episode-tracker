@@ -52,7 +52,7 @@ export default function RootLayout() {
                       onPress={() => {
                         setShowSettings(true);
                         console.log("menu");
-                        router.navigate("/(home)/settings");
+                        router.navigate("/(config)/settings");
                       }}
                     />
                   )}

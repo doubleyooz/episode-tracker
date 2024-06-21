@@ -8,9 +8,7 @@ const tintColorDark = "#fff";
 const primary = "#ffa500";
 const secondary = "#dfe0df";
 
-export type ThemeType = "light" | "dark";
-
-export type ColorsType = "text" | "primary" | "secondary" | "error";
+export type ColorsType = "primary" | "secondary" | "error";
 
 export const Themes = {
   light: {

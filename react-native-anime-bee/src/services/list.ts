@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { api, config } from ".";
 
-export interface List {
+export interface IList {
   id: number;
   title: string;
   description: string;

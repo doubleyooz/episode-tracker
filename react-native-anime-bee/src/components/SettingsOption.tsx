@@ -1,41 +1,30 @@
-import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
-import { ThemeType, ColorsType, Themes } from "../constants/Colors";
+import { TouchableOpacity, Text, View } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
+import tw from "@/src/constants/tailwind";
 interface LabelProps {
   onPress?: () => any;
   label: string;
   value: string;
   disabled?: boolean;
-  theme?: ThemeType;
 }
 
 const SettingsOption: React.FC<LabelProps> = (props) => {
-  const { onPress = () => {}, label, value, disabled, theme = "light" } = props;
-  const colors = Themes[theme];
+  const { onPress = () => {}, label, value, disabled } = props;
+
   return (
     <TouchableOpacity
-      style={[styles.buttonContainer, disabled ? { ...styles.disabled } : {}]}
+      style={[
+        tw`flex flex-row w-full ${
+          disabled ? "opacity-50" : ""
+        } px-3 items-center justify-between`,
+      ]}
       onPress={onPress}
       disabled={disabled}
     >
-      <Text
-        style={{
-          color: colors.text,
-          fontSize: 20,
-          letterSpacing: 0.5,
-          fontWeight: "600",
-        }}
-      >
-        {label}
-      </Text>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-        <Text
-          style={{
-            color: "gray",
-            fontSize: 14,
-          }}
-        >
+      <Text style={tw`text-xl font-semibold tracking-wider`}>{label}</Text>
+      <View style={tw`flex flex-row items-center gap-3`}>
+        <Text style={tw`text-sm text-gray-600 dark:text-gray-300`}>
           {value}
         </Text>
 
@@ -44,26 +33,5 @@ const SettingsOption: React.FC<LabelProps> = (props) => {
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  buttonContainer: {
-    display: "flex",
-    flexDirection: "row",
-    width: "100%",
-    paddingHorizontal: 12,
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-
-  text: {
-    fontSize: 20,
-    color: "black",
-    textAlign: "center",
-    letterSpacing: 0.5,
-  },
-});
 
 export default SettingsOption;

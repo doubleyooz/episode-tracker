@@ -1,19 +1,20 @@
-import { TouchableOpacity, Text } from "react-native";
-import { ThemeType, ColorsType } from "@/src/constants/Colors";
 import { ReactNode } from "react";
+import { TouchableOpacity, Text } from "react-native";
+
+import tw from "@/src/constants/tailwind";
+import { ColorsType } from "@/src/constants/Colors";
 
 interface CustomButtomProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onPress: () => any;
   text?: string;
   uppercase?: boolean;
-  theme?: ThemeType;
   variant?: ColorsType;
   disabled?: boolean;
   outline?: boolean;
   rounded?: boolean;
   icon?: ReactNode;
-  size?: "8" | "9" | "12" | "14";
+  size?: string;
 }
 
 const CustomButtom: React.FC<CustomButtomProps> = (props) => {
@@ -25,26 +26,26 @@ const CustomButtom: React.FC<CustomButtomProps> = (props) => {
     icon,
     rounded,
     outline,
-    theme = "light",
-    size = "14",
+    variant = "primary",
+    size = "56",
   } = props;
 
   return (
     <TouchableOpacity
-      className={` items-center justify-center h-${size}  ${
+      style={tw`items-center justify-center h-[${size}px] ${
         outline
-          ? `border border-primary-500 bg-transparent`
-          : `bg-${theme}-primary-500`
+          ? `border border-${variant}-500 bg-transparent`
+          : `bg-${variant}-500`
       } ${disabled ? "opacity-50" : ""} ${
-        rounded ? `rounded-full w-${size}` : `rounded-s-2xl px-4 `
+        rounded ? `rounded-full w-[${size}px]` : `rounded-lg px-4 py-2`
       }`}
       onPress={onPress}
       disabled={disabled}
     >
       {!icon && (
         <Text
-          className={`text-base tracking-wider font-semibold ${
-            outline ? "text-${theme}-primary-500" : ""
+          style={tw`text-base tracking-wider font-semibold ${
+            outline ? `text-${variant}-500` : ""
           }`}
         >
           {uppercase ? text.toUpperCase() : text}

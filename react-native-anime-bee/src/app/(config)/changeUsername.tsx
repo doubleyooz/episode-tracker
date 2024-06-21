@@ -1,6 +1,6 @@
 import { View, ScrollView, Image, Text, StyleSheet } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { Redirect, Stack, router } from "expo-router";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
@@ -16,7 +16,7 @@ export default function ChangeEmail() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
 
-  const { user, setUser } = useAuth();
+  const { user, setUser, handleSignout } = useAuth();
 
   const onSubmit = async (username: string) => {
     if (!user) return;
@@ -24,14 +24,17 @@ export default function ChangeEmail() {
       const result = await updateUser({ username });
       console.log({ result: result.data });
       setUser({ ...user, username: username });
-      router.navigate("/(home)/settings");
+      router.navigate("/(config)/settings");
     } catch (err: any) {
-      console.log({ err: err.response.data });
+      if (err.response.data.statusCode === 401) {
+        //await handleSignout();
+      }
+      console.log({ err: err.response.headers });
       setShowErrorToast(true);
     }
   };
 
-  const { control, handleSubmit, formState } = useForm({
+  const { control, handleSubmit, formState } = useForm<FieldValues>({
     defaultValues: {
       username: "",
     },
@@ -39,7 +42,7 @@ export default function ChangeEmail() {
   });
 
   const { token } = useAuth();
-  console.log({ changeEmailToken: token });
+  console.log({ changeUsernameToken: token });
   if (!token) return <Redirect href={"/(auth)/login"} />;
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>

@@ -1,6 +1,6 @@
 import { View, ScrollView, Image, StyleSheet } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { Redirect, Stack, router } from "expo-router";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
@@ -10,7 +10,7 @@ import { useAuth } from "@/src/contexts/AuthContext";
 import WelcomeHeader from "@/src/components/WelcomeHeader";
 
 export default function LoginScreen() {
-  const { control, handleSubmit, formState } = useForm({
+  const { control, handleSubmit, formState } = useForm<FieldValues>({
     defaultValues: {
       email: "",
       password: "",
@@ -76,7 +76,7 @@ export default function LoginScreen() {
           fontSize={16}
           onPress={() => router.navigate("/(auth)/signup")}
           disabled={false}
-          variant={"text"}
+          variant={"secondary"}
         />
       </View>
     </ScrollView>

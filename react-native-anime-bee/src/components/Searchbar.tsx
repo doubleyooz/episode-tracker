@@ -1,8 +1,6 @@
 import { View, TextInput } from "react-native";
-import { ThemeType, ColorsType, Themes } from "../constants/Colors";
 import { Entypo } from "@expo/vector-icons";
-import InputField from "./InputField";
-
+import tw from "@/src/constants/tailwind";
 interface SearchBarProps {
   onChange?: (data: any) => void;
   onBlur?: () => void;
@@ -10,8 +8,6 @@ interface SearchBarProps {
 
   placeholder?: string;
   disabled?: boolean;
-  theme?: ThemeType;
-  variant?: ColorsType;
 }
 
 const SearchBar: React.FC<SearchBarProps> = (props) => {
@@ -21,16 +17,13 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
     placeholder = "Search",
     search,
     disabled = false,
-    theme = "light",
-    variant = "text",
   } = props;
 
   return (
     <View
-      className={`flex w-full flex-row items-center ${
+      style={tw`flex w-full flex-row items-center ${
         disabled ? "opacity-50" : ""
-      } h-12 rounded-2xl bg-${theme}-background border px-3`}
-      style={{ columnGap: 8 }}
+      } h-12 rounded-2xl bg-background dark:bg-black border px-3 gap-2`}
     >
       <Entypo name="magnifying-glass" size={24} color="black" />
 

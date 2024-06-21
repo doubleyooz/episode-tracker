@@ -33,17 +33,17 @@ export default function App() {
       }}
     >
       <View style={styles.titleContainer}>
-        <Text>User's settings body</Text>
+        <Text>{user ? user.username : "User"}'s settings body</Text>
         <SettingsOption
           label={"Email"}
           value={user ? user.email : "empty????"}
           disabled={user ? !user.active : true}
-          onPress={() => router.push("(home)/changeEmail")}
+          onPress={() => router.push("(config)/changeEmail")}
         />
         <SettingsOption
           label={"Username"}
           value={user ? user.username : "empty????"}
-          onPress={() => router.push("(home)/changeUsername")}
+          onPress={() => router.push("(config)/changeUsername")}
         />
       </View>
 

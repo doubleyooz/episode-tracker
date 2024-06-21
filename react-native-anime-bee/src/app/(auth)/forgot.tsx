@@ -1,6 +1,6 @@
 import { View, ScrollView, Image, StyleSheet } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
 import { forgotSchema, codeSchema, countdown } from "@/src/utils/rules";
@@ -28,7 +28,7 @@ export default function ForgotScreen() {
     control: emailControl,
     handleSubmit: handleEmailSubmit,
     formState: emailFormState,
-  } = useForm({
+  } = useForm<FieldValues>({
     defaultValues: {
       email: "",
     },
@@ -39,7 +39,7 @@ export default function ForgotScreen() {
     control: codeControl,
     handleSubmit: handleCodeSubmit,
     formState: codeFormState,
-  } = useForm({
+  } = useForm<FieldValues>({
     defaultValues: {
       code: "",
     },
@@ -121,7 +121,7 @@ export default function ForgotScreen() {
           fontSize={16}
           onPress={() => router.navigate("/(auth)/signup")}
           disabled={false}
-          variant={"text"}
+          variant={"secondary"}
         />
       </View>
     </ScrollView>

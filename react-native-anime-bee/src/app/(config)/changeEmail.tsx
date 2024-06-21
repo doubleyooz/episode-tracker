@@ -1,6 +1,6 @@
 import { View, ScrollView, Image, Text, StyleSheet } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { Redirect, Stack, router } from "expo-router";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/CustomButton";
@@ -12,6 +12,7 @@ import { useState } from "react";
 import Timer from "@/src/components/Countdown";
 import MyToast from "@/src/components/MyToast";
 
+import tw from "@/src/constants/tailwind";
 export default function ChangeEmail() {
   const [newEmail, setNewEmail] = useState<string | null>(null);
   const [isInTimeout, setIsInTimeout] = useState(false);
@@ -44,7 +45,7 @@ export default function ChangeEmail() {
       setShowSuccessToast(true);
       setShowErrorToast(false);
       setUser({ ...user, email: newEmail });
-      router.navigate("/(home)/settings");
+      router.navigate("/(config)/settings");
     } catch (err: any) {
       setShowErrorToast(true);
       setShowSuccessToast(false);
@@ -56,7 +57,7 @@ export default function ChangeEmail() {
     control: emailControl,
     handleSubmit: handleEmailSubmit,
     formState: emailFormState,
-  } = useForm({
+  } = useForm<FieldValues>({
     defaultValues: {
       email: "",
     },
@@ -67,7 +68,7 @@ export default function ChangeEmail() {
     control: codeControl,
     handleSubmit: handleCodeSubmit,
     formState: codeFormState,
-  } = useForm({
+  } = useForm<FieldValues>({
     defaultValues: {
       code: "",
     },
@@ -79,8 +80,8 @@ export default function ChangeEmail() {
   if (!token) return <Redirect href={"/(auth)/login"} />;
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
-      <View style={styles.inputContainer}>
-        <Text style={[{ fontSize: 24, fontWeight: "600", marginBottom: 20 }]}>
+      <View style={[tw`flex w-1/2`, { rowGap: 24 }]}>
+        <Text style={tw`text-3xl font-semibold mb-5`}>
           {"What's your new Email?"}
         </Text>
         <InputField
@@ -143,11 +144,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     gap: 40,
-  },
-
-  inputContainer: {
-    display: "flex",
-    width: "50%",
-    rowGap: 24,
   },
 });
