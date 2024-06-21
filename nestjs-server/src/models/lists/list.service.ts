@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { SQLWrapper, and, eq } from 'drizzle-orm';
+import { SQLWrapper, and, eq, isNotNull } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
@@ -75,10 +75,12 @@ export class ListService {
         id: schema.lists.id,
         title: schema.lists.title,
         description: schema.lists.description,
+        animes: schema.animes,
       })
 
       .from(schema.lists)
-      .where(and(...conditions));
+      .fullJoin(schema.animes, eq(schema.lists.id, schema.animes.listId))
+      .where(and(...conditions, isNotNull(schema.lists.id)));
     return { result: result };
   }
 

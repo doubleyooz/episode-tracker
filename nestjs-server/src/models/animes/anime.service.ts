@@ -67,8 +67,10 @@ export class AnimeService {
         allowGaps: schema.animes.allowGaps,
         finished: schema.animes.finished,
         numberOfEpisodes: schema.animes.numberOfEpisodes,
+        episodes: schema.episodes,
       })
-      .from(schema.animes);
+      .from(schema.animes)
+      .fullJoin(schema.episodes, eq(schema.animes.id, schema.episodes.animeId));
     return { result: result };
   }
 

@@ -15,6 +15,17 @@ export interface LooseIList {
   userId?: number;
 }
 
+const createList = async (
+  title: string,
+  description: string
+): Promise<AxiosResponse<IResponse>> => {
+  return await api.post<IResponse>("lists", {
+    title,
+
+    description,
+  });
+};
+
 const findLists = async (
   userId: number
 ): Promise<AxiosResponse<IResponseArray>> => {
@@ -27,4 +38,4 @@ const updateList = async (
   return await api.put<IResponse>("lists", data);
 };
 
-export { findLists, updateList };
+export { createList, findLists, updateList };

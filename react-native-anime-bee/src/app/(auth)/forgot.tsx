@@ -2,7 +2,7 @@ import { View, ScrollView, Image, StyleSheet } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
 import InputField from "@/src/components/InputField";
-import CustomButton from "@/src/components/CustomButton";
+import CustomButton from "@/src/components/buttons/CustomButton";
 import { forgotSchema, codeSchema, countdown } from "@/src/utils/rules";
 import Label from "@/src/components/Label";
 import { Redirect, Stack, router } from "expo-router";

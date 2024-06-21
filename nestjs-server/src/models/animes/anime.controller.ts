@@ -40,11 +40,13 @@ export class AnimeController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.animeService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') _id: number) {
     return this.animeService.findOneById(_id);
   }

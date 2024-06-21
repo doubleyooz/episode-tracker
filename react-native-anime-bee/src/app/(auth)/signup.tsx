@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import { useState } from "react";
 import InputField from "@/src/components/InputField";
-import CustomButton from "@/src/components/CustomButton";
+import CustomButton from "@/src/components/buttons/CustomButton";
 import { signUpSchema } from "@/src/utils/rules";
 import Label from "@/src/components/Label";
 import { Redirect, router } from "expo-router";

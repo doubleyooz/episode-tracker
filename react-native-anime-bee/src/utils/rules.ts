@@ -84,6 +84,11 @@ export const createAnimeSchema = z.object({
   allowGaps: z.boolean().default(false),
 });
 
+export const createListSchema = z.object({
+  title,
+  description,
+});
+
 export const countdown = 360;
 
 export const resetPasswordSchema = z

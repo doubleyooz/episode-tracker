@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
 import { Redirect, Stack, router } from "expo-router";
 import InputField from "@/src/components/InputField";
-import CustomButton from "@/src/components/CustomButton";
+import CustomButton from "@/src/components/buttons/CustomButton";
 import { codeSchema, countdown, forgotSchema } from "@/src/utils/rules";
 import Label from "@/src/components/Label";
 import { useAuth } from "@/src/contexts/AuthContext";

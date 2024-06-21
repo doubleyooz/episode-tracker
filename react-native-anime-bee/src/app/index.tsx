@@ -16,7 +16,7 @@ import SearchBar from "@/src/components/Searchbar";
 
 import ListCard from "../components/cards/List";
 import { IList, findLists } from "../services/list";
-import CustomButtom from "../components/CustomButton";
+import CustomButtom from "../components/buttons/CustomButton";
 
 import { IAnime, findAnimes } from "../services/anime";
 import AnimeDropdown from "../components/AnimeDropdown";
@@ -24,6 +24,7 @@ import AnimeDropdown from "../components/AnimeDropdown";
 import tw from "@/src/constants/tailwind";
 import Episode from "../components/Episode";
 import { Entypo } from "@expo/vector-icons";
+import RoundedButton from "../components/buttons/RoundedButton";
 
 export default function App() {
   const { token, user, handleSignout } = useAuth();
@@ -53,9 +54,7 @@ export default function App() {
   return (
     <SafeAreaView style={[styles.pageContainer]}>
       <Stack.Screen options={{ title: `${user?.username}'s home` }} />
-      <View
-        style={[tw`flex pt-4 justify-center bg-green-200 px-6`, { rowGap: 24 }]}
-      >
+      <View style={[tw`flex pt-4 justify-center px-6`, { rowGap: 24 }]}>
         <SearchBar
           search={search}
           onChange={(str: string) => setSearch(str)}
@@ -66,14 +65,6 @@ export default function App() {
         {lists.length === 0 ? (
           <View>
             <Text style={tw`text-base text-center`}>No lists found</Text>
-            <View style={tw`flex flex-row justify-center `}>
-              <CustomButtom
-                icon={<Entypo name="plus" size={30} color="black" />}
-                onPress={() => router.navigate("/(home)/createList")}
-                rounded
-                outline
-              />
-            </View>
           </View>
         ) : (
           <FlatList
@@ -85,16 +76,18 @@ export default function App() {
                 title={item.title}
                 description={item.description}
                 items={[]}
+                dropdown
               />
             )}
             keyExtractor={(item) => item.id.toString()}
           />
         )}
-
+        <RoundedButton action={() => router.navigate("/(home)/createList")} />
         <Text style={tw`text-base tracking-wider`}>My animes</Text>
         <AnimeDropdown
           addAction={() => router.navigate("/(home)/createAnime")}
           items={animes}
+          addAnime
         />
       </View>
 
@@ -107,7 +100,6 @@ const styles = StyleSheet.create({
   pageContainer: {
     flexDirection: "column",
 
-    backgroundColor: "red",
     flex: 1,
     margin: 0,
     padding: 0,

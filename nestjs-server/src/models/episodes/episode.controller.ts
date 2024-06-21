@@ -44,11 +44,13 @@ export class EpisodeController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll(@Query() filter: FindEpisodeRequest) {
     return this.episodeService.findAll(filter);
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') _id: number) {
     return this.episodeService.findOneById(_id);
   }

@@ -4,7 +4,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 
 import { useAuth } from "@/src/contexts/AuthContext";
 import SettingsOption from "@/src/components/SettingsOption";
-import CustomButton from "@/src/components/CustomButton";
+import CustomButton from "@/src/components/buttons/CustomButton";
 import { logout } from "@/src/services/auth";
 
 export default function App() {

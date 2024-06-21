@@ -5,21 +5,22 @@ import {
   Text,
   StyleSheet,
   Switch,
+  SafeAreaView,
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
 import { Redirect, Stack, router } from "expo-router";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/buttons/CustomButton";
-import { createAnimeSchema } from "@/src/utils/rules";
+import { createListSchema } from "@/src/utils/rules";
 import Label from "@/src/components/Label";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { useState } from "react";
 import MyToast from "@/src/components/MyToast";
-import { IAnime, createAnime } from "@/src/services/anime";
 
 import tw from "@/src/constants/tailwind";
-import SwitchField from "@/src/components/Switch";
+import { IList, createList } from "@/src/services/list";
+import AnimeDropdown from "@/src/components/AnimeDropdown";
 export default function ChangeEmail() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -32,25 +33,19 @@ export default function ChangeEmail() {
 
   const onSubmit = async (
     title: string,
-    studio: string,
-    description: string,
-    numberOfEpisodes: number,
-    allowGaps: boolean
+
+    description: string
   ) => {
     try {
       console.log({
         title,
-        studio,
+
         description,
-        numberOfEpisodes,
-        allowGaps,
       });
-      const result = await createAnime(
+      const result = await createList(
         title,
-        studio,
-        description,
-        numberOfEpisodes,
-        allowGaps
+
+        description
       );
 
       router.back();
@@ -67,14 +62,14 @@ export default function ChangeEmail() {
       allowGaps: false,
       numberOfEpisodes: 0,
     },
-    resolver: zodResolver(createAnimeSchema),
+    resolver: zodResolver(createListSchema),
     shouldUnregister: false,
   });
 
   return (
-    <ScrollView contentContainerStyle={[styles.pageContainer]}>
+    <SafeAreaView style={[styles.pageContainer]}>
       <View style={[tw`flex w-1/2`, { rowGap: 24 }]}>
-        <Text style={tw`text-xl font-semibold mb-5`}>{"Create new anime"}</Text>
+        <Text style={tw`text-xl font-semibold mb-5`}>{"Create new list"}</Text>
 
         <InputField
           label={"Title"}
@@ -86,14 +81,6 @@ export default function ChangeEmail() {
         />
 
         <InputField
-          label={"Studio name"}
-          name={"studio"}
-          control={control}
-          placeholder="Studio name"
-          keyboardType="default"
-          required
-        />
-        <InputField
           label={"Description"}
           name={"description"}
           control={control}
@@ -103,33 +90,12 @@ export default function ChangeEmail() {
           multiline
           required
         />
-
-        <SwitchField
-          label={"Allow Gaps"}
-          name={"allowGaps"}
-          control={control}
-          setValue={setValue}
-        />
-        <InputField
-          label={"Number of episodes"}
-          name={"numberOfEpisodes"}
-          control={control}
-          placeholder="numberOfEpisodes"
-          keyboardType="numeric"
-          setValue={setValue}
-          onlyNumbers
-        />
+        <AnimeDropdown items={[]} />
         <View style={tw`flex gap-3 mb-4`}>
           <CustomButton
-            text={"Create Anime"}
-            onPress={handleSubmit((data: FieldValues | IAnime) =>
-              onSubmit(
-                data.title,
-                data.studio,
-                data.description,
-                data.numberOfEpisodes,
-                data.allowGaps
-              )
+            text={"Create List"}
+            onPress={handleSubmit((data: FieldValues | IList) =>
+              onSubmit(data.title, data.description)
             )}
             uppercase
             disabled={!formState.isValid}
@@ -144,7 +110,7 @@ export default function ChangeEmail() {
       </View>
       <MyToast text="Account created" visible={showSuccessToast} />
       <MyToast text="Request failed to send." visible={showErrorToast} />
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 

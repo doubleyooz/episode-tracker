@@ -17,6 +17,7 @@ interface ListCardProps {
   expanded?: boolean;
   outline?: boolean;
   username?: string;
+  addAnime?: boolean;
 }
 
 const ListCard: React.FC<ListCardProps> = (props) => {
@@ -30,6 +31,7 @@ const ListCard: React.FC<ListCardProps> = (props) => {
     variant = "primary",
     expanded = false,
     username,
+    addAnime = false,
     outline = false,
   } = props;
 
@@ -107,7 +109,7 @@ const ListCard: React.FC<ListCardProps> = (props) => {
   return (
     <View style={tw`flex flex-col`}>
       <View
-        style={tw`flex self-stretch border ${
+        style={tw`flex self-stretch relative border ${
           variant === "primary" ? `border-primary-500` : `border-secondary-300`
         } items-center min-w-[270px] px-3 h-14 overflow-hidden rounded-lg`}
       >
@@ -126,27 +128,33 @@ const ListCard: React.FC<ListCardProps> = (props) => {
             ]}
           >
             <Text
-              style={tw`text-xs text-black`}
+              style={tw`text-xs text-black ${dropdown ? "mr-2" : ""}`}
               numberOfLines={2}
               ellipsizeMode="tail"
             >
-              {description}
+              {description +
+                description +
+                description +
+                description +
+                description}
             </Text>
-            <Text
-              style={tw`text-sm text-black`}
-              numberOfLines={2}
-              ellipsizeMode="tail"
-            >
-              {`(${items.length})`}
-            </Text>
-            {dropdown && (
-              <Entypo
-                name={showItems ? "chevron-up" : "chevron-down"}
-                size={24}
-                color="black"
-                onPress={() => handleCollapse()}
-              />
-            )}
+            <View style={tw`flex flex-row items-center absolute right-0`}>
+              <Text
+                style={tw`text-sm text-black`}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {`(${items.length})`}
+              </Text>
+              {dropdown && (
+                <Entypo
+                  name={showItems ? "chevron-up" : "chevron-down"}
+                  size={24}
+                  color="black"
+                  onPress={() => handleCollapse()}
+                />
+              )}
+            </View>
           </View>
         </View>
       </View>
@@ -155,6 +163,7 @@ const ListCard: React.FC<ListCardProps> = (props) => {
           addAction={() => console.log("add anime")}
           items={items}
           marginLeft
+          addAnime={addAnime}
         />
       )}
     </View>

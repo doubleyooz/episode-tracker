@@ -34,7 +34,7 @@ export class ListController {
   )
   @Post()
   @UseGuards(JwtAuthGuard)
-  async createAnime(
+  async createList(
     @CurrentUser() user: User,
     @Body() request: CreateListRequest,
   ) {
@@ -42,11 +42,13 @@ export class ListController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll(@Query() filter: FindListRequest) {
     return this.listService.findAll(filter);
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') _id: number) {
     return this.listService.findOneById(_id);
   }
