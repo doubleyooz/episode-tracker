@@ -12,10 +12,13 @@ export async function main() {
     connectionString: db_url,
     ssl: db_ssl === 'true',
   });
-
-  await migrate(drizzle(pool, { schema }), {
-    migrationsFolder: './src/drizzle/migrations',
-  });
+  try {
+    await migrate(drizzle(pool, { schema }), {
+      migrationsFolder: './src/drizzle/migrations',
+    });
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 main();
