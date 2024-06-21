@@ -8,6 +8,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { main } from './drizzle/migrate';
 
 async function bootstrap() {
   const CORS_OPTIONS = {
@@ -49,5 +50,6 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   await app.listen(appConfig.get<number>('PORT'), '0.0.0.0');
+  await main();
 }
 bootstrap();

@@ -11,7 +11,7 @@ export const DrizzleProvider = [
     provide: DrizzleAsyncProvider,
     inject: [ConfigService],
     useFactory: async (configService: ConfigService) => {
-      const database = configService.get<string>('POSTGRES_DB');
+      const database = configService.get<string>('POSTGRES_DATABASE');
       const user = configService.get<string>('POSTGRES_USER');
       const password = configService.get<string>('POSTGRES_PASSWORD');
       const port = configService.get<number>('POSTGRES_PORT');

@@ -9,6 +9,6 @@ export default defineConfig({
     schema: 'public', // used in PostgreSQL only and default to `drizzle`
   },
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    url: process.env.POSTGRES_URL,
   },
 });

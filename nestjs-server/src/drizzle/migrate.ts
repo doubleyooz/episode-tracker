@@ -5,8 +5,8 @@ import { Pool } from 'pg';
 
 import * as schema from './schema';
 
-async function main() {
-  const database = process.env.POSTGRES_DB;
+export async function main() {
+  const database = process.env.POSTGRES_DATABASE;
   const user = process.env.POSTGRES_USER;
   const password = process.env.POSTGRES_PASSWORD;
   const port = process.env.POSTGRES_PORT;
