@@ -42,14 +42,14 @@ export class AuthService {
   }
 
   async recoverPassword(request: RecoveryCodeRequest) {
-    await this.userService.generateRecoveryCode(request.email);
+    const result = await this.userService.generateRecoveryCode(request.email);
 
     if (request.skipEmail) return { message: 'Recovery code sent' };
     const mail: MailDataRequired = {
       to: request.email,
       from: this.configService.get<string>('SMTP_SENDER'), // verified sender email
       subject: 'Test email',
-      content: [{ type: 'text/plain', value: 'Test body' }],
+      content: [{ type: 'text/plain', value: `Code: ${result.result}` }],
     };
     return {
       result: await this.sendGridClient.send(mail),
@@ -58,14 +58,14 @@ export class AuthService {
   }
 
   async activationCode(request: RecoveryCodeRequest) {
-    await this.userService.generateRecoveryCode(request.email);
+    const result = await this.userService.generateRecoveryCode(request.email);
 
     if (request.skipEmail) return { message: 'Activation code sent' };
     const mail: MailDataRequired = {
       to: request.email,
       from: this.configService.get<string>('SMTP_SENDER'), // verified sender email
       subject: 'Test email',
-      content: [{ type: 'text/plain', value: 'Test body' }],
+      content: [{ type: 'text/plain', value: `Code: ${result.result}` }],
     };
     return {
       result: await this.sendGridClient.send(mail),

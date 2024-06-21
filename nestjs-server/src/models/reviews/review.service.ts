@@ -115,17 +115,12 @@ export class ReviewService {
     return { result: result };
   }
 
-  async deleteById(
-    user_id: number,
-    anime_id: number,
-    review_id: number,
-  ): Promise<any> {
+  async deleteById(user_id: number, review_id: number): Promise<any> {
     try {
       const result = await this.drizzle
         .delete(schema.reviews)
         .where(
           and(
-            eq(schema.reviews.animeId, anime_id),
             eq(schema.reviews.userId, user_id),
             eq(schema.reviews.id, review_id),
           ),

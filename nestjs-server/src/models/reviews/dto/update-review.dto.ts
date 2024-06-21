@@ -8,16 +8,31 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { Review } from '../review.interface';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateReviewRequest {
+  @ApiProperty({
+    example: 'This Anime is horrible',
+    description: 'The description of the review',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   description: string;
 
+  @ApiProperty({
+    example: false,
+    description: 'If the anime is tagged has finished',
+    required: false,
+  })
   @IsOptional()
   @IsBoolean()
   finished: boolean;
 
+  @ApiProperty({
+    example: 2,
+    description: 'The id of the review',
+  })
   @IsNumber()
   @Min(0)
   id: number;

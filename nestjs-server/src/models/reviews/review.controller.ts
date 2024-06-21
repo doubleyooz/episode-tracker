@@ -21,7 +21,20 @@ import { ReviewService } from './review.service';
 import { CreateReviewRequest } from './dto/create-review.dto';
 import { UpdateReviewRequest } from './dto/update-review.dto';
 import { FindReviewRequest } from './dto/find-review.dto';
+import {
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiProduces,
+  ApiQuery,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('reviews')
 @UseInterceptors(ResponseInterceptor)
 @Controller('reviews')
 export class ReviewController {
@@ -35,22 +48,57 @@ export class ReviewController {
   )
   @Post()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Create a review.' })
+  @ApiCreatedResponse({
+    description: 'The review has been successfully created.',
+  })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   async createReview(
     @CurrentUser() user: User,
     @Body() request: CreateReviewRequest,
   ) {
-    console.log({ controller: request });
     return this.reviewService.create(user.id, request);
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @ApiQuery({
+    name: 'description',
+    required: false,
+    description: 'Filter reviews by description.',
+  })
+  @ApiQuery({
+    name: 'userId',
+    required: false,
+    description: 'Filter reviews by userId.',
+  })
+  @ApiQuery({
+    name: 'animeId',
+    required: false,
+    description: 'Filter reviews by animeId.',
+  })
+  @ApiOperation({ summary: 'Find all reviews.' })
+  @ApiOkResponse({ description: 'Reviews found and returned.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   findAll(@Query() filter: FindReviewRequest) {
     return this.reviewService.findAll(filter);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: 'id',
+    description: 'Review id',
+    example: '1',
+  })
+  @ApiOperation({ summary: 'Find a review by ID.' })
+  @ApiOkResponse({ description: 'Review found and returned.' })
+  @ApiNotFoundResponse({ description: 'Review not found.' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   findOne(@Param('id') _id: number) {
     return this.reviewService.findOneById(_id);
   }
@@ -63,12 +111,16 @@ export class ReviewController {
   )
   @Put()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Update a review by ID.' })
+  @ApiOkResponse({ description: 'Review updated and returned.' })
+  @ApiNotFoundResponse({ description: 'Review not found.' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   async update(
     @CurrentUser() user: User,
     @Body() request: UpdateReviewRequest,
   ): Promise<object> {
-    console.log('update');
-    console.log(user);
     return this.reviewService.updateReviewById(user.id, request);
   }
 
@@ -78,13 +130,25 @@ export class ReviewController {
       skipMissingProperties: true,
     }),
   )
-  @Delete(':review_id/:anime_id')
+  @Delete(':review_id')
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: 'review_id',
+    description: 'Review Id',
+    example: '1',
+  })
+  @ApiOperation({
+    summary: 'Delete a review by ID',
+  })
+  @ApiOkResponse({ description: 'Review found and deleted.' })
+  @ApiNotFoundResponse({ description: 'Review not found.' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   async delete(
     @CurrentUser() user: User,
-    @Param('review_id') episodeId: number,
-    @Param('anime_id') animeId: number,
+    @Param('review_id') review_id: number,
   ): Promise<object> {
-    return this.reviewService.deleteById(user.id, animeId, episodeId);
+    return this.reviewService.deleteById(user.id, review_id);
   }
 }

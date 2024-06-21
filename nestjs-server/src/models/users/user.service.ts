@@ -15,6 +15,7 @@ import * as schema from '../../drizzle/schema';
 import { CreateUserRequest } from './dto/create-user.dto';
 import { IResponseBody } from 'src/common/interceptors/response.interceptor';
 import { UpdateUserRequest } from './dto/update-user.dto';
+import { FindUserRequest } from './dto/find-user.dto';
 
 @Injectable()
 export class UserService {
@@ -71,14 +72,22 @@ export class UserService {
     return { result };
   }
 
-  async findAll() {
+  async findAll(_filter: FindUserRequest) {
+    const conditions: SQLWrapper[] = [];
+
+    // Only add tokenVersion condition if _tokenVersion is defined
+    if (_filter !== undefined) {
+      if (_filter.username)
+        conditions.push(eq(schema.users.username, _filter.username));
+    }
     const result = await this.drizzle
       .select({
         id: schema.users.id,
         email: schema.users.email,
         username: schema.users.username,
       })
-      .from(schema.users);
+      .from(schema.users)
+      .where(and(...conditions));
     return { result: result };
   }
 

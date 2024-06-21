@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UnauthorizedException,
   UseGuards,
   UseInterceptors,
@@ -20,7 +21,21 @@ import JwtAuthGuard from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorators/currentUser.decorator';
 import { User } from './user.interface';
 import { UpdateUserRequest } from './dto/update-user.dto';
+import {
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiProduces,
+  ApiQuery,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { FindUserRequest } from './dto/find-user.dto';
 
+@ApiTags('users')
 @UseInterceptors(ResponseInterceptor)
 @Controller('users')
 export class UserController {
@@ -32,18 +47,44 @@ export class UserController {
       whitelist: true,
     }),
   )
+  @ApiOperation({ summary: 'Create a user.' })
+  @ApiCreatedResponse({
+    description: 'The user has been successfully created.',
+  })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   async createUser(@Body() request: CreateUserRequest) {
     return this.userService.create(request);
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll() {
-    return this.userService.findAll();
+  @ApiQuery({
+    name: 'username',
+    required: false,
+    description: 'Filter users by username.',
+  })
+  @ApiOperation({ summary: 'Find all users.' })
+  @ApiOkResponse({ description: 'Users found and returned.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
+  findAll(@Query() filter: FindUserRequest) {
+    return this.userService.findAll(filter);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: 'id',
+    description: 'User id',
+    example: '1',
+  })
+  @ApiOperation({ summary: 'Find a user by ID.' })
+  @ApiOkResponse({ description: 'User found and returned.' })
+  @ApiNotFoundResponse({ description: 'User not found.' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   findOne(@Param('id') _id: number) {
     return this.userService.findOneById(_id);
   }
@@ -56,6 +97,12 @@ export class UserController {
   )
   @Put()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Update a user by ID.' })
+  @ApiOkResponse({ description: 'User updated and returned.' })
+  @ApiNotFoundResponse({ description: 'User not found.' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   async update(
     @CurrentUser() user: User,
     @Body() request: UpdateUserRequest,
@@ -73,6 +120,20 @@ export class UserController {
   )
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: 'id',
+    description: 'User Id',
+    example: '1',
+  })
+  @ApiOperation({
+    summary: 'Delete a user by ID',
+    description: 'it must match the id in the auth token',
+  })
+  @ApiOkResponse({ description: 'User found and deleted.' })
+  @ApiNotFoundResponse({ description: 'User not found.' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   async delete(
     @CurrentUser() user: User,
     @Param('id') id: number,

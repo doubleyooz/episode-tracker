@@ -21,7 +21,20 @@ import { AnimeService } from './anime.service';
 import { CreateAnimeRequest } from './dto/create-anime.dto';
 import { UpdateAnimeRequest } from './dto/update-anime.dto';
 import { FindAnimeRequest } from './dto/find-anime.dto';
+import {
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiProduces,
+  ApiQuery,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('animes')
 @UseInterceptors(ResponseInterceptor)
 @Controller('animes')
 export class AnimeController {
@@ -34,6 +47,12 @@ export class AnimeController {
   )
   @Post()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Create an anime.' })
+  @ApiCreatedResponse({
+    description: 'The anime has been successfully created.',
+  })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   async createAnime(
     @CurrentUser() user: User,
     @Body() request: CreateAnimeRequest,
@@ -43,12 +62,42 @@ export class AnimeController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @ApiQuery({
+    name: 'title',
+    required: false,
+    description: 'Filter animes by title.',
+  })
+  @ApiQuery({
+    name: 'description',
+    required: false,
+    description: 'Filter animes by description.',
+  })
+  @ApiQuery({
+    name: 'userId',
+    required: false,
+    description: 'Filter animes by userId.',
+  })
+  @ApiOperation({ summary: 'Find all animes.' })
+  @ApiOkResponse({ description: 'Animes found and returned.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   findAll(@Query() filter: FindAnimeRequest) {
     return this.animeService.findAll(filter);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: 'id',
+    description: 'Anime Id',
+    example: '1',
+  })
+  @ApiOperation({ summary: 'Find an anime by ID.' })
+  @ApiOkResponse({ description: 'Anime found and returned.' })
+  @ApiNotFoundResponse({ description: 'Anime not found.' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   findOne(@Param('id') _id: number) {
     return this.animeService.findOneById(_id);
   }
@@ -61,6 +110,12 @@ export class AnimeController {
   )
   @Put()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Update an anime by ID.' })
+  @ApiOkResponse({ description: 'Anime updated and returned.' })
+  @ApiNotFoundResponse({ description: 'Anime not found.' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   async update(
     @CurrentUser() user: User,
     @Body() request: UpdateAnimeRequest,
@@ -78,6 +133,17 @@ export class AnimeController {
   )
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: 'id',
+    description: 'Anime Id',
+    example: '1',
+  })
+  @ApiOperation({ summary: 'Delete an anime by ID.' })
+  @ApiOkResponse({ description: 'Anime found and returned.' })
+  @ApiNotFoundResponse({ description: 'Anime not found.' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
   async delete(
     @CurrentUser() user: User,
     @Param('id') id: number,

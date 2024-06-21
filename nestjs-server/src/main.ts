@@ -7,6 +7,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const CORS_OPTIONS = {
@@ -30,7 +31,14 @@ async function bootstrap() {
     AppModule,
     adapter,
   );
-
+  const config = new DocumentBuilder()
+    .setTitle('Episodes tracker')
+    .setDescription('The Episodes tracker API description')
+    .setVersion('1.0')
+    .addTag('Episodes')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
   await app.register(fastifyCookie);
 
   const appConfig: ConfigService = app.get(ConfigService);
