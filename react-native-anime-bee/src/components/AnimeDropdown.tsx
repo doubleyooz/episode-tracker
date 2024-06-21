@@ -33,7 +33,7 @@ const AnimeDropdown: React.FC<AnimeDropdownProps> = (props) => {
         )}
         keyExtractor={(item) => item.id.toString()}
       />
-      <View style={tw`flex flex-row justify-center align-center`}>
+      <View style={tw`flex flex-row justify-center `}>
         <CustomButtom
           icon={<Entypo name="plus" size={30} color="black" />}
           onPress={() => addAction()}

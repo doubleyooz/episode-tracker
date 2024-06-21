@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { api, config } from ".";
+import { IResponse, IResponseArray, api, config } from ".";
 
 export interface IUser {
   email: string;
@@ -15,14 +15,14 @@ export interface LooseIUser {
   active?: boolean;
 }
 
-const findUsers = async (): Promise<AxiosResponse<Response>> => {
-  return await api.get<Response>(`users`);
+const findUsers = async (): Promise<AxiosResponse<IResponseArray>> => {
+  return await api.get<IResponseArray>(`users`);
 };
 
 const updateUser = async (
   data: LooseIUser
-): Promise<AxiosResponse<Response>> => {
-  return await api.put<Response>("users", data);
+): Promise<AxiosResponse<IResponse>> => {
+  return await api.put<IResponse>("users", data);
 };
 
 export { findUsers, updateUser };

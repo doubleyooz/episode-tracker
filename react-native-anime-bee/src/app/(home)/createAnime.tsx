@@ -1,4 +1,11 @@
-import { View, ScrollView, Image, Text, StyleSheet } from "react-native";
+import {
+  View,
+  ScrollView,
+  Image,
+  Text,
+  StyleSheet,
+  Switch,
+} from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
 import { Redirect, Stack, router } from "expo-router";
@@ -9,13 +16,11 @@ import Label from "@/src/components/Label";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { useState } from "react";
 import MyToast from "@/src/components/MyToast";
-import { createAnime } from "@/src/services/anime";
+import { IAnime, createAnime } from "@/src/services/anime";
 
 import tw from "@/src/constants/tailwind";
+import SwitchField from "@/src/components/Switch";
 export default function ChangeEmail() {
-  const [newEmail, setNewEmail] = useState<string | null>(null);
-  const [isInTimeout, setIsInTimeout] = useState(false);
-
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
 
@@ -28,30 +33,49 @@ export default function ChangeEmail() {
   const onSubmit = async (
     title: string,
     studio: string,
-    description: string
+    description: string,
+    numberOfEpisodes: number,
+    allowGaps: boolean
   ) => {
     try {
-      const result = await createAnime(title, studio, description);
-      console.log(result);
+      console.log({
+        title,
+        studio,
+        description,
+        numberOfEpisodes,
+        allowGaps,
+      });
+      const result = await createAnime(
+        title,
+        studio,
+        description,
+        numberOfEpisodes,
+        allowGaps
+      );
+
       router.back();
     } catch (err: any) {
       console.log({ err: err.response.data.message });
     }
   };
 
-  const { control, handleSubmit, formState } = useForm<FieldValues>({
+  const { control, handleSubmit, formState, setValue } = useForm<FieldValues>({
     defaultValues: {
       title: "",
       studio: "",
       description: "",
+      allowGaps: false,
+      numberOfEpisodes: 0,
     },
     resolver: zodResolver(createAnimeSchema),
+    shouldUnregister: false,
   });
 
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
       <View style={[tw`flex w-1/2`, { rowGap: 24 }]}>
         <Text style={tw`text-xl font-semibold mb-5`}>{"Create new anime"}</Text>
+
         <InputField
           label={"Title"}
           name={"title"}
@@ -63,7 +87,7 @@ export default function ChangeEmail() {
 
         <InputField
           label={"Studio name"}
-          name={"Studio"}
+          name={"studio"}
           control={control}
           placeholder="Studio name"
           keyboardType="default"
@@ -79,13 +103,50 @@ export default function ChangeEmail() {
           multiline
           required
         />
-        <CustomButton
-          text={"Confirm"}
-          onPress={handleSubmit((data) =>
-            onSubmit(data.title, data.studio, data.description)
-          )}
-          uppercase
-          disabled={!formState.isValid}
+
+        <SwitchField
+          label={"Allow Gaps"}
+          name={"allowGaps"}
+          control={control}
+          setValue={setValue}
+        />
+        <InputField
+          label={"Number of episodes"}
+          name={"numberOfEpisodes"}
+          control={control}
+          placeholder="numberOfEpisodes"
+          keyboardType="numeric"
+          setValue={setValue}
+          onlyNumbers
+        />
+        <View style={tw`flex gap-3 mb-4`}>
+          <CustomButton
+            text={"Create Anime"}
+            onPress={handleSubmit((data: FieldValues | IAnime) =>
+              onSubmit(
+                data.title,
+                data.studio,
+                data.description,
+                data.numberOfEpisodes,
+                data.allowGaps
+              )
+            )}
+            uppercase
+            disabled={!formState.isValid}
+          />
+          <CustomButton
+            text={"Cancel"}
+            onPress={() => router.back()}
+            uppercase
+            variant="secondary"
+          />
+        </View>
+        <Label
+          text={"Delete anime"}
+          fontSize={16}
+          onPress={() => router.navigate("/(auth)/signup")}
+          disabled={false}
+          variant={"error"}
         />
       </View>
       <MyToast text="Account created" visible={showSuccessToast} />

@@ -1,6 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Control, Controller, FieldValues } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldValues,
+  UseFormSetValue,
+} from "react-hook-form";
 import {
   KeyboardTypeOptions,
   StyleSheet,
@@ -23,6 +28,8 @@ export interface InputFieldProps {
   multiline?: boolean;
   placeholder: string;
   numberOfLines?: number;
+  onlyNumbers?: boolean;
+  setValue?: UseFormSetValue<FieldValues>;
   keyboardType: KeyboardTypeOptions;
 }
 
@@ -36,18 +43,25 @@ export default function InputField({
   multiline,
   numberOfLines = 1,
   keyboardType,
+  setValue,
+  onlyNumbers = false,
   disabled = false,
 }: InputFieldProps) {
   const [isVisible, setIsValueVisible] = useState(false);
 
-  const fieldHeight = numberOfLines > 1 ? {} : { height: 56 };
+  const fieldHeight =
+    numberOfLines > 1 ? { maxHeight: 56 * numberOfLines } : { height: 56 };
+  const handleOnlyNumbers = (text: string) => {
+    // Allow only numbers
+    return text.replace(/[^0-9]/g, "");
+  };
 
   return (
     <Controller
       control={control}
       name={name}
       render={({
-        field: { value, onChange, onBlur },
+        field: { value, onChange, onBlur, ref },
         fieldState: { error },
       }) => (
         <View
@@ -64,27 +78,56 @@ export default function InputField({
             {required && <Text style={tw`text-red-500`}>*</Text>}
           </View>
           <View style={tw`relative`}>
-            <TextInput
-              style={[
-                tw`px-4 border-[2px] rounded-lg ${
-                  error
-                    ? "border-red-500"
-                    : "border-[#DFE0DD] dark:border-gray-300"
-                } text-black dark:text-white bg-white dark:bg-black`,
-                fieldHeight,
-              ]}
-              keyboardType={keyboardType}
-              secureTextEntry={isPassword && !isVisible}
-              defaultValue={value}
-              placeholder={placeholder}
-              placeholderTextColor="#DFE0DD"
-              editable={!disabled}
-              selectTextOnFocus={!disabled}
-              multiline={multiline}
-              numberOfLines={numberOfLines}
-              onChangeText={onChange}
-              onBlur={onBlur}
-            />
+            {onlyNumbers && setValue && name ? (
+              <TextInput
+                style={[
+                  tw`px-4 border-[2px] rounded-lg  ${
+                    error
+                      ? "border-red-500"
+                      : "border-[#DFE0DD] dark:border-gray-300"
+                  } text-black dark:text-white bg-white dark:bg-black`,
+                  fieldHeight,
+                ]}
+                keyboardType={keyboardType}
+                secureTextEntry={isPassword && !isVisible}
+                defaultValue={value}
+                placeholder={placeholder}
+                placeholderTextColor="#DFE0DD"
+                editable={!disabled}
+                selectTextOnFocus={!disabled}
+                multiline={multiline}
+                numberOfLines={numberOfLines}
+                onChangeText={onChange}
+                onChange={(e) => {
+                  console.log({ name, text: e.nativeEvent.text });
+
+                  setValue(name, handleOnlyNumbers(e.nativeEvent.text));
+                }}
+                onBlur={onBlur}
+              />
+            ) : (
+              <TextInput
+                style={[
+                  tw`px-4 border-[2px] rounded-lg ${
+                    error
+                      ? "border-red-500"
+                      : "border-[#DFE0DD] dark:border-gray-300"
+                  } text-black dark:text-white bg-white dark:bg-black`,
+                  fieldHeight,
+                ]}
+                keyboardType={keyboardType}
+                secureTextEntry={isPassword && !isVisible}
+                defaultValue={value}
+                placeholder={placeholder}
+                placeholderTextColor="#DFE0DD"
+                editable={!disabled}
+                selectTextOnFocus={!disabled}
+                multiline={multiline}
+                numberOfLines={numberOfLines}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
             {isPassword && (
               <View
                 style={[

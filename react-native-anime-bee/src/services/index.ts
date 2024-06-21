@@ -6,14 +6,21 @@ axios.defaults.headers.common["Access-Control-Allow-Origin"] =
   process.env.EXPO_PUBLIC_SERVER_URL;
 axios.defaults.withCredentials = true;
 
-export interface Response {
-  data: { _id: string };
+export interface IResponse {
+  data: any;
+  message: string;
+  metadata: { accessToken: string };
+}
+
+export interface IResponseArray {
+  data: any[];
   message: string;
   metadata: { accessToken: string };
 }
 
 export const api: AxiosInstance = axios.create({
   baseURL: process.env.EXPO_PUBLIC_SERVER_URL,
+  withCredentials: true,
 });
 
 export const config = (token: string) => {

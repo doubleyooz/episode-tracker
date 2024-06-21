@@ -18,10 +18,12 @@ import ListCard from "../components/cards/List";
 import { IList, findLists } from "../services/list";
 import CustomButtom from "../components/CustomButton";
 
-import { IAnime } from "../services/anime";
+import { IAnime, findAnimes } from "../services/anime";
 import AnimeDropdown from "../components/AnimeDropdown";
 
 import tw from "@/src/constants/tailwind";
+import Episode from "../components/Episode";
+import { Entypo } from "@expo/vector-icons";
 
 export default function App() {
   const { token, user, handleSignout } = useAuth();
@@ -30,35 +32,22 @@ export default function App() {
 
   const [search, setSearch] = useState("");
   const [lists, setLists] = useState<IList[]>([]);
-  const [animes, setAnimes] = useState<IAnime[]>([
-    {
-      id: 2,
-      title: "title",
-      description: "dsadasdasd",
-      studio: "studio",
-    },
-    {
-      id: 1,
-      title: "title",
-      studio: "studio",
-      description:
-        "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?",
-    },
-    {
-      id: 3,
-      title: "title",
-      studio: "studio",
-      description: "dsadasdasd",
-    },
-  ]);
+  const [animes, setAnimes] = useState<IAnime[]>([]);
 
   useEffect(() => {
     const fetchLists = async () => {
       const listResults = (await findLists(user?.id as number)).data;
-      console.log({ listResults });
+      console.log({ listResults: listResults.data });
+      setLists(listResults.data as IList[]);
     };
 
+    const fetchAnimes = async () => {
+      const animeResults = (await findAnimes(user?.id as number)).data;
+      console.log({ animeResults: animeResults.data });
+      setAnimes(animeResults.data as IAnime[]);
+    };
     fetchLists();
+    fetchAnimes();
   }, []);
 
   return (
@@ -72,26 +61,35 @@ export default function App() {
           onChange={(str: string) => setSearch(str)}
           onBlur={() => {}}
         />
-        <Text style={tw`text-base tracking-wider`}>My lists</Text>
-        <ListCard
-          onPress={() => {}}
-          title={"Title"}
-          description={
-            "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
-          }
-          dropdown
-          items={animes}
-        />
 
-        <ListCard
-          onPress={() => {}}
-          title={"Title"}
-          description={
-            "(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?(A Psalm of David.) The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
-          }
-          expanded
-          items={[]}
-        />
+        <Text style={tw`text-base tracking-wider`}>My lists</Text>
+        {lists.length === 0 ? (
+          <View>
+            <Text style={tw`text-base text-center`}>No lists found</Text>
+            <View style={tw`flex flex-row justify-center `}>
+              <CustomButtom
+                icon={<Entypo name="plus" size={30} color="black" />}
+                onPress={() => router.navigate("/(home)/createList")}
+                rounded
+                outline
+              />
+            </View>
+          </View>
+        ) : (
+          <FlatList
+            contentContainerStyle={{ rowGap: 4 }}
+            data={lists}
+            renderItem={({ item, index }) => (
+              <ListCard
+                onPress={() => {}}
+                title={item.title}
+                description={item.description}
+                items={[]}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        )}
 
         <Text style={tw`text-base tracking-wider`}>My animes</Text>
         <AnimeDropdown

@@ -30,12 +30,14 @@ const CustomButtom: React.FC<CustomButtomProps> = (props) => {
     size = "56",
   } = props;
 
+  const colorVariant =
+    variant === "secondary" ? `${variant}-200` : `${variant}-500`;
   return (
     <TouchableOpacity
       style={tw`items-center justify-center h-[${size}px] ${
         outline
-          ? `border border-${variant}-500 bg-transparent`
-          : `bg-${variant}-500`
+          ? `border border-${colorVariant} bg-transparent`
+          : `bg-${colorVariant}`
       } ${disabled ? "opacity-50" : ""} ${
         rounded ? `rounded-full w-[${size}px]` : `rounded-lg px-4 py-2`
       }`}
@@ -45,7 +47,7 @@ const CustomButtom: React.FC<CustomButtomProps> = (props) => {
       {!icon && (
         <Text
           style={tw`text-base tracking-wider font-semibold ${
-            outline ? `text-${variant}-500` : ""
+            outline ? `text-${colorVariant}` : ""
           }`}
         >
           {uppercase ? text.toUpperCase() : text}
