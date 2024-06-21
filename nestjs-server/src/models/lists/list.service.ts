@@ -14,6 +14,15 @@ import { IResponseBody } from 'src/common/interceptors/response.interceptor';
 import { CreateListRequest } from './dto/create-list.dto';
 import { UpdateListRequest } from './dto/update-list.dto';
 import { FindListRequest } from './dto/find-list.dto';
+const LIST_PROJECTION = {
+  id: schema.lists.id,
+  title: schema.lists.title,
+  description: schema.lists.description,
+
+  userId: schema.lists.userId,
+
+  animes: schema.animes,
+};
 
 @Injectable()
 export class ListService {
@@ -71,12 +80,7 @@ export class ListService {
     }
 
     const result = await this.drizzle
-      .select({
-        id: schema.lists.id,
-        title: schema.lists.title,
-        description: schema.lists.description,
-        animes: schema.animes,
-      })
+      .select(LIST_PROJECTION)
 
       .from(schema.lists)
       .fullJoin(schema.animes, eq(schema.lists.id, schema.animes.listId))
@@ -86,11 +90,7 @@ export class ListService {
 
   async findOneById(_id: number) {
     const result = await this.drizzle
-      .select({
-        id: schema.lists.id,
-        title: schema.lists.title,
-        description: schema.lists.description,
-      })
+      .select(LIST_PROJECTION)
       .from(schema.lists)
       .innerJoin(schema.animes, eq(schema.animes.listId, schema.lists.id))
       .where(eq(schema.lists.id, _id));
