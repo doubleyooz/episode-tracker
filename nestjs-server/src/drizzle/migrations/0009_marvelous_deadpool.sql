@@ -1,0 +1,1 @@
+ALTER TABLE "animes" RENAME COLUMN "totalOfEpisodes" TO "numberOfEpisodes";

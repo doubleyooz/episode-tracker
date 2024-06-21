@@ -25,6 +25,8 @@ export class AuthController {
 
     res.setCookie('jid', token, {
       httpOnly: true,
+      sameSite: 'none',
+      path: '/',
       expires,
     });
     res.send(user);
@@ -41,6 +43,8 @@ export class AuthController {
     res.setCookie('jid', '', {
       httpOnly: true,
       expires: new Date(),
+      path: '/',
+      sameSite: 'none',
     });
   }
 

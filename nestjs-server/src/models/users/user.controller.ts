@@ -37,11 +37,13 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') _id: number) {
     return this.userService.findOneById(_id);
   }

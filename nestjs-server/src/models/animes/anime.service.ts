@@ -63,6 +63,10 @@ export class AnimeService {
         id: schema.animes.id,
         title: schema.animes.title,
         description: schema.animes.description,
+        studio: schema.animes.studio,
+        allowGaps: schema.animes.allowGaps,
+        finished: schema.animes.finished,
+        numberOfEpisodes: schema.animes.numberOfEpisodes,
       })
       .from(schema.animes);
     return { result: result };

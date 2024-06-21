@@ -57,6 +57,20 @@
       "when": 1718731378937,
       "tag": "0007_plain_shockwave",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1718971450383,
+      "tag": "0008_breezy_stardust",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1718972735429,
+      "tag": "0009_marvelous_deadpool",
+      "breakpoints": true
     }
   ]
 }
