@@ -22,6 +22,7 @@ const AnimeCard: React.FC<AnimeCardProps> = (props) => {
 
   return (
     <TouchableOpacity
+      onPress={onPress}
       style={tw`flex flex-row self-stretch ${
         variant === "primary" ? `bg-primary-500` : `bg-secondary-300`
       } items-center  min-w-[270px] px-3 h-24 overflow-hidden rounded-lg`}

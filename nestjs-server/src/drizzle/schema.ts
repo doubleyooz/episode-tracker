@@ -29,15 +29,22 @@ export const animes = pgTable('animes', {
     .references(() => users.id),
 
   listId: integer('list_id').references(() => lists.id),
+  parentId: integer('parent_id').references(() => animes.id),
+
   finished: boolean('finished').default(false),
   allowGaps: boolean('allowGaps').default(false),
   numberOfEpisodes: integer('numberOfEpisodes').default(0),
 });
 
-export const animeRelations = relations(animes, ({ one }) => ({
+export const animeRelations = relations(animes, ({ one, many }) => ({
   userId: one(users, {
     fields: [animes.userId],
     references: [users.id],
+  }),
+  children: many(animes),
+  parentId: one(animes, {
+    fields: [animes.parentId],
+    references: [animes.id],
   }),
 
   listId: one(lists, {

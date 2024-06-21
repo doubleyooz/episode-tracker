@@ -7,6 +7,8 @@ import CustomButtom from "@/src/components/buttons/CustomButton";
 
 import tw from "@/src/constants/tailwind";
 import RoundedButton from "./buttons/RoundedButton";
+import { useAnime } from "../contexts/AnimeContext";
+import { router } from "expo-router";
 interface AnimeDropdownProps {
   addAction?: () => any;
   marginLeft?: boolean;
@@ -18,7 +20,7 @@ interface AnimeDropdownProps {
 
 const AnimeDropdown: React.FC<AnimeDropdownProps> = (props) => {
   const { addAction, items = [], marginLeft, addAnime } = props;
-
+  const { setAnime } = useAnime();
   return (
     <View style={[tw`${marginLeft ? "ml-5" : ""}`, { rowGap: 4 }]}>
       {items.length === 0 ? (
@@ -29,7 +31,12 @@ const AnimeDropdown: React.FC<AnimeDropdownProps> = (props) => {
           data={items}
           renderItem={({ item, index }) => (
             <AnimeCard
-              onPress={() => {}}
+              onPress={() => {
+                console.log({ item });
+                setAnime(item);
+
+                router.navigate(`/(home)/anime`);
+              }}
               title={item.title}
               variant={index % 2 === 0 ? "primary" : "secondary"}
               description={item.description}

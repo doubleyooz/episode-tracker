@@ -71,6 +71,13 @@
       "when": 1718972735429,
       "tag": "0009_marvelous_deadpool",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1718987097868,
+      "tag": "0010_regular_yellowjacket",
+      "breakpoints": true
     }
   ]
 }

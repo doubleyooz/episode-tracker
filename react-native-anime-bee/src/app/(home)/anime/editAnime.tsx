@@ -16,10 +16,11 @@ import Label from "@/src/components/Label";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { useState } from "react";
 import MyToast from "@/src/components/MyToast";
-import { IAnime, createAnime } from "@/src/services/anime";
+import { IAnime, createAnime, updateAnimes } from "@/src/services/anime";
 
 import tw from "@/src/constants/tailwind";
 import SwitchField from "@/src/components/Switch";
+import { useAnime } from "@/src/contexts/AnimeContext";
 export default function ChangeEmail() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -28,7 +29,9 @@ export default function ChangeEmail() {
 
   const { token } = useAuth();
   if (!token) return <Redirect href={"/(auth)/login"} />;
+  const { anime, setAnime } = useAnime();
 
+  if (!anime) return <Redirect href={"/"} />;
   const onSubmit = async (
     title: string,
     studio: string,
@@ -37,21 +40,23 @@ export default function ChangeEmail() {
     allowGaps: boolean
   ) => {
     try {
-      console.log({
+      const result = await updateAnimes({
         title,
         studio,
         description,
         numberOfEpisodes,
         allowGaps,
+        id: anime.id,
       });
-      const result = await createAnime(
+      setAnime((prev) => ({
+        ...prev,
         title,
         studio,
         description,
         numberOfEpisodes,
-        allowGaps
-      );
-
+        allowGaps,
+        id: anime.id,
+      }));
       router.back();
     } catch (err: any) {
       console.log({ err: err.response.data.message });
@@ -60,11 +65,11 @@ export default function ChangeEmail() {
 
   const { control, handleSubmit, formState, setValue } = useForm<FieldValues>({
     defaultValues: {
-      title: "",
-      studio: "",
-      description: "",
-      allowGaps: false,
-      numberOfEpisodes: 0,
+      title: anime.title,
+      studio: anime.studio,
+      description: anime.description,
+      allowGaps: anime.allowGaps,
+      numberOfEpisodes: anime.numberOfEpisodes,
     },
     resolver: zodResolver(createAnimeSchema),
     shouldUnregister: false,
@@ -73,7 +78,7 @@ export default function ChangeEmail() {
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
       <View style={[tw`flex w-1/2`, { rowGap: 24 }]}>
-        <Text style={tw`text-xl font-semibold mb-5`}>{"Create new anime"}</Text>
+        <Text style={tw`text-xl font-semibold mb-5`}>{"Update Anime"}</Text>
 
         <InputField
           label={"Title"}
@@ -120,7 +125,7 @@ export default function ChangeEmail() {
         />
         <View style={tw`flex gap-3 mb-4`}>
           <CustomButton
-            text={"Create Anime"}
+            text={"Update Anime"}
             onPress={handleSubmit((data: FieldValues | IAnime) =>
               onSubmit(
                 data.title,

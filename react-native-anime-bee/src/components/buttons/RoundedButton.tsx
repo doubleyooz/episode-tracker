@@ -4,6 +4,7 @@ import { View } from "react-native";
 import CustomButtom from "@/src/components/buttons/CustomButton";
 interface RoundedButtonProps {
   action: () => any;
+  icon?: React.ReactNode;
   justify?:
     | "center"
     | "flex-start"
@@ -16,11 +17,11 @@ interface RoundedButtonProps {
 }
 
 const RoundedButton: React.FC<RoundedButtonProps> = (props) => {
-  const { action, justify = "center", size = "40" } = props;
+  const { action, justify = "center", icon, size = "40" } = props;
   return (
     <View style={tw`flex flex-row justify-${justify} `}>
       <CustomButtom
-        icon={<Entypo name="plus" size={30} color="black" />}
+        icon={icon ? icon : <Entypo name="plus" size={30} color="black" />}
         onPress={() => {
           console.log("here");
           action();

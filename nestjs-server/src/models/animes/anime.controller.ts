@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -19,6 +20,7 @@ import { User } from 'src/models/users/user.interface';
 import { AnimeService } from './anime.service';
 import { CreateAnimeRequest } from './dto/create-anime.dto';
 import { UpdateAnimeRequest } from './dto/update-anime.dto';
+import { FindAnimeRequest } from './dto/find-anime.dto';
 
 @UseInterceptors(ResponseInterceptor)
 @Controller('animes')
@@ -41,8 +43,8 @@ export class AnimeController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll() {
-    return this.animeService.findAll();
+  findAll(@Query() filter: FindAnimeRequest) {
+    return this.animeService.findAll(filter);
   }
 
   @Get(':id')

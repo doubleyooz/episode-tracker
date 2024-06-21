@@ -5,4 +5,5 @@ export interface Anime {
   studio: string;
   userId?: number;
   finished?: boolean;
+  parentId?: number;
 }

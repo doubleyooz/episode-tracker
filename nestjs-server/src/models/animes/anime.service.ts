@@ -1,11 +1,10 @@
-import { ConfigService } from '@nestjs/config';
 import {
   BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { SQLWrapper, and, eq, isNotNull } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
@@ -13,6 +12,7 @@ import * as schema from 'src/drizzle/schema';
 import { IResponseBody } from 'src/common/interceptors/response.interceptor';
 import { CreateAnimeRequest } from './dto/create-anime.dto';
 import { UpdateAnimeRequest } from './dto/update-anime.dto';
+import { FindAnimeRequest } from './dto/find-anime.dto';
 
 const ANIME_PROJECTION = {
   id: schema.animes.id,
@@ -21,6 +21,7 @@ const ANIME_PROJECTION = {
   studio: schema.animes.studio,
   allowGaps: schema.animes.allowGaps,
   finished: schema.animes.finished,
+  userId: schema.animes.userId,
   numberOfEpisodes: schema.animes.numberOfEpisodes,
   episodes: schema.episodes,
 };
@@ -30,7 +31,6 @@ export class AnimeService {
   constructor(
     @Inject(DrizzleAsyncProvider)
     private readonly drizzle: NodePgDatabase<typeof schema>,
-    private readonly configService: ConfigService,
   ) {}
 
   async create(id: number, anime: CreateAnimeRequest): Promise<IResponseBody> {
@@ -68,11 +68,26 @@ export class AnimeService {
     return { result };
   }
 
-  async findAll() {
+  async findAll(_filter: FindAnimeRequest) {
+    const conditions: SQLWrapper[] = [];
+
+    // Only add tokenVersion condition if _tokenVersion is defined
+    if (_filter !== undefined) {
+      if (_filter.description)
+        conditions.push(eq(schema.animes.description, _filter.description));
+      if (_filter.title)
+        conditions.push(eq(schema.animes.title, _filter.title));
+      if (_filter.userId)
+        conditions.push(eq(schema.animes.userId, _filter.userId));
+      if (_filter.id) conditions.push(eq(schema.animes.id, _filter.id));
+    }
+
     const result = await this.drizzle
       .select(ANIME_PROJECTION)
+
       .from(schema.animes)
-      .fullJoin(schema.episodes, eq(schema.animes.id, schema.episodes.animeId));
+      .fullJoin(schema.episodes, eq(schema.animes.id, schema.episodes.animeId))
+      .where(and(...conditions, isNotNull(schema.animes.id)));
     return { result: result };
   }
 
@@ -80,6 +95,7 @@ export class AnimeService {
     const result = await this.drizzle
       .select(ANIME_PROJECTION)
       .from(schema.animes)
+      .fullJoin(schema.episodes, eq(schema.animes.id, schema.episodes.animeId))
       .where(eq(schema.animes.id, _id));
     if (result.length === 0) throw new NotFoundException('Anime not found');
     return { result: result };

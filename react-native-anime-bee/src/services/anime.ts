@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { IResponse, IResponseArray, api } from ".";
+import { IEpisode } from "./episode";
 
 export interface IAnime {
   id: number;
@@ -10,6 +11,7 @@ export interface IAnime {
   allowGaps: boolean;
   userId?: number;
   finished?: boolean;
+  episodes?: IEpisode[];
 }
 
 export interface LooseIAnime {
