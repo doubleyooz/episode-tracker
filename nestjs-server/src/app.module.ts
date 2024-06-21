@@ -19,6 +19,7 @@ import { ReviewModule } from './models/reviews/review.module';
         POSTGRES_PORT: Joi.number().required(),
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_URL: Joi.string().required(),
+        POSTGRES_SSL: Joi.boolean().required(),
         POSTGRES_DATABASE: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),

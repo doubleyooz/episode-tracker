@@ -6,13 +6,11 @@ import { Pool } from 'pg';
 import * as schema from './schema';
 
 export async function main() {
-  const database = process.env.POSTGRES_DATABASE;
-  const user = process.env.POSTGRES_USER;
-  const password = process.env.POSTGRES_PASSWORD;
-  const port = process.env.POSTGRES_PORT;
-  const host = process.env.POSTGRES_HOST;
+  const db_url = process.env.POSTGRES_URL;
+  const db_ssl = process.env.POSTGRES_SSL;
   const pool = new Pool({
-    connectionString: `postgres://${user}:${password}@${host}:${port}/${database}`,
+    connectionString: db_url,
+    ssl: db_ssl === 'true',
   });
 
   await migrate(drizzle(pool, { schema }), {
