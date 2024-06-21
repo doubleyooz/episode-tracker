@@ -119,9 +119,7 @@ export class EpisodeService {
 
   async findOneById(_id: number) {
     const result = await this.drizzle
-      .select({
-        EPISODE_PROJECTION,
-      })
+      .select(EPISODE_PROJECTION)
       .from(schema.episodes)
       .where(eq(schema.episodes.id, _id));
     if (result.length === 0) throw new NotFoundException('Episode not found');

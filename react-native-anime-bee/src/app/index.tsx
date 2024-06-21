@@ -16,14 +16,11 @@ import SearchBar from "@/src/components/Searchbar";
 
 import ListCard from "../components/cards/List";
 import { IList, findLists } from "../services/list";
-import CustomButtom from "../components/buttons/CustomButton";
 
 import { IAnime, findAnimes } from "../services/anime";
 import AnimeDropdown from "../components/AnimeDropdown";
 
 import tw from "@/src/constants/tailwind";
-import Episode from "../components/Episode";
-import { Entypo } from "@expo/vector-icons";
 import RoundedButton from "../components/buttons/RoundedButton";
 
 export default function App() {
@@ -85,7 +82,7 @@ export default function App() {
         <RoundedButton action={() => router.navigate("/(home)/createList")} />
         <Text style={tw`text-base tracking-wider`}>My animes</Text>
         <AnimeDropdown
-          addAction={() => router.navigate("/(home)/createAnime")}
+          addAction={() => router.navigate("/(home)/anime/createAnime")}
           items={animes}
           addAnime
         />

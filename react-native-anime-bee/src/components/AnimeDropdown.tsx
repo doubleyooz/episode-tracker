@@ -1,6 +1,5 @@
 import { View, FlatList, Text } from "react-native";
 import { ColorsType } from "@/src/constants/Colors";
-import { Entypo } from "@expo/vector-icons";
 
 import { IAnime } from "@/src/services/anime";
 import AnimeCard from "@/src/components/cards/Anime";

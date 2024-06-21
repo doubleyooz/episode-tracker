@@ -14,6 +14,17 @@ import { IResponseBody } from 'src/common/interceptors/response.interceptor';
 import { CreateAnimeRequest } from './dto/create-anime.dto';
 import { UpdateAnimeRequest } from './dto/update-anime.dto';
 
+const ANIME_PROJECTION = {
+  id: schema.animes.id,
+  title: schema.animes.title,
+  description: schema.animes.description,
+  studio: schema.animes.studio,
+  allowGaps: schema.animes.allowGaps,
+  finished: schema.animes.finished,
+  numberOfEpisodes: schema.animes.numberOfEpisodes,
+  episodes: schema.episodes,
+};
+
 @Injectable()
 export class AnimeService {
   constructor(
@@ -59,16 +70,7 @@ export class AnimeService {
 
   async findAll() {
     const result = await this.drizzle
-      .select({
-        id: schema.animes.id,
-        title: schema.animes.title,
-        description: schema.animes.description,
-        studio: schema.animes.studio,
-        allowGaps: schema.animes.allowGaps,
-        finished: schema.animes.finished,
-        numberOfEpisodes: schema.animes.numberOfEpisodes,
-        episodes: schema.episodes,
-      })
+      .select(ANIME_PROJECTION)
       .from(schema.animes)
       .fullJoin(schema.episodes, eq(schema.animes.id, schema.episodes.animeId));
     return { result: result };
@@ -76,12 +78,7 @@ export class AnimeService {
 
   async findOneById(_id: number) {
     const result = await this.drizzle
-      .select({
-        id: schema.animes.id,
-        title: schema.animes.title,
-        description: schema.animes.description,
-        studio: schema.animes.studio,
-      })
+      .select(ANIME_PROJECTION)
       .from(schema.animes)
       .where(eq(schema.animes.id, _id));
     if (result.length === 0) throw new NotFoundException('Anime not found');
