@@ -95,12 +95,6 @@ export default function ChangeEmail() {
             uppercase
             disabled={!formState.isValid}
           />
-          <CustomButton
-            text={"Cancel"}
-            onPress={() => router.back()}
-            uppercase
-            variant="secondary"
-          />
         </View>
       </View>
       <MyToast text="Account created" visible={showSuccessToast} />

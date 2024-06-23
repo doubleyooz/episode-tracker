@@ -79,6 +79,7 @@ export default function App() {
                 title={item.title}
                 description={item.description}
                 items={[]}
+                outline
               />
             )}
             keyExtractor={(item) => item.id.toString()}

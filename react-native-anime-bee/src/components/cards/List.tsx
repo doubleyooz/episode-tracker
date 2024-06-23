@@ -53,7 +53,6 @@ const ListCard: React.FC<ListCardProps> = (props) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          setIsExpanded(!isExpanded);
           onPress();
         }}
         style={tw`flex self-stretch  ${
@@ -61,7 +60,7 @@ const ListCard: React.FC<ListCardProps> = (props) => {
             ? `border-primary-500 bg-primary-500`
             : `border-secondary-300 bg-secondary-300`
         } ${
-          outline ? "border bg-transparent" : "border-none"
+          outline ? "border bg-transparent" : "border-0"
         } min-w-[270px] px-3 pb-3 h-36 overflow-hidden rounded-lg`}
       >
         <View style={[tw`flex items-start flex-1 h-20 mt-4`, { rowGap: 19 }]}>
@@ -117,14 +116,18 @@ const ListCard: React.FC<ListCardProps> = (props) => {
       </TouchableOpacity>
     );
   return (
-    <View style={tw`flex flex-col`}>
+    <View
+      style={tw`flex flex-col px-3  ${
+        outline ? "border bg-transparent" : "border-0"
+      } ${
+        variant === "primary" ? `border-primary-500` : `border-secondary-300`
+      } rounded-lg`}
+    >
       <TouchableWithoutFeedback
         onPress={() => {
           setIsExpanded(!isExpanded);
         }}
-        style={tw`flex self-stretch relative border ${
-          variant === "primary" ? `border-primary-500` : `border-secondary-300`
-        } items-center min-w-[270px] px-3 h-14 overflow-hidden rounded-lg`}
+        style={tw`flex self-stretch relative border  items-center min-w-[270px] h-14 overflow-hidden `}
       >
         <View style={tw`flex flex-row items-center h-10 flex-1 ml-3 `}>
           <Text

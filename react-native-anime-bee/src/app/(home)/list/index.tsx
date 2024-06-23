@@ -7,6 +7,7 @@ import EpisodeList from "@/src/components/EpisodeList";
 import RoundedButton from "@/src/components/buttons/RoundedButton";
 import { Entypo, Feather, FontAwesome6 } from "@expo/vector-icons";
 import { useList } from "@/src/contexts/ListContext";
+import AnimeDropdown from "@/src/components/AnimeDropdown";
 
 export default function ViewListScreen() {
   const { list } = useList();
@@ -30,7 +31,7 @@ export default function ViewListScreen() {
           </Text>
         </View>
         <RoundedButton
-          action={() => router.navigate("/(home)/list/editList")}
+          action={() => router.navigate("/list/editList")}
           icon={
             isCurrentUser ? (
               <Entypo name="edit" size={24} color="black" />
@@ -40,6 +41,7 @@ export default function ViewListScreen() {
           }
         />
       </View>
+      <AnimeDropdown items={list.animes || []} addAnime />
     </SafeAreaView>
   );
 }

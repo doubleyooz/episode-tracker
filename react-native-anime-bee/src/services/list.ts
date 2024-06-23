@@ -1,11 +1,13 @@
 import { AxiosResponse } from "axios";
 import { IResponse, IResponseArray, api, config } from ".";
+import { IAnime } from "./anime";
 
 export interface IList {
   id: number;
   title: string;
   description: string;
   userId?: number;
+  animes?: IAnime[];
 }
 
 export interface LooseIList {
@@ -13,6 +15,7 @@ export interface LooseIList {
   title?: string;
   description?: string;
   userId?: number;
+  animes?: IAnime[];
 }
 
 const createList = async (

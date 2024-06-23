@@ -11,16 +11,16 @@ import { FieldValues, useForm } from "react-hook-form";
 import { Redirect, Stack, router } from "expo-router";
 import InputField from "@/src/components/InputField";
 import CustomButton from "@/src/components/buttons/CustomButton";
-import { createAnimeSchema } from "@/src/utils/rules";
+import { createListSchema } from "@/src/utils/rules";
 import Label from "@/src/components/Label";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { useState } from "react";
 import MyToast from "@/src/components/MyToast";
-import { IAnime, createAnime, updateAnimes } from "@/src/services/anime";
 
 import tw from "@/src/constants/tailwind";
 import SwitchField from "@/src/components/Switch";
-import { useAnime } from "@/src/contexts/AnimeContext";
+import { useList } from "@/src/contexts/ListContext";
+import { IList, updateList } from "@/src/services/list";
 export default function ChangeEmail() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -29,33 +29,26 @@ export default function ChangeEmail() {
 
   const { token } = useAuth();
   if (!token) return <Redirect href={"/(auth)/login"} />;
-  const { anime, setAnime } = useAnime();
 
-  if (!anime) return <Redirect href={"/"} />;
+  const { list, setList } = useList();
+
+  if (!list) return <Redirect href={"/"} />;
   const onSubmit = async (
     title: string,
-    studio: string,
-    description: string,
-    numberOfEpisodes: number,
-    allowGaps: boolean
+
+    description: string
   ) => {
     try {
-      const result = await updateAnimes({
+      const result = await updateList({
         title,
-        studio,
         description,
-        numberOfEpisodes,
-        allowGaps,
-        id: anime.id,
+        id: list.id,
       });
-      setAnime((prev) => ({
+      setList((prev) => ({
         ...prev,
         title,
-        studio,
         description,
-        numberOfEpisodes,
-        allowGaps,
-        id: anime.id,
+        id: list.id,
       }));
       router.back();
     } catch (err: any) {
@@ -65,20 +58,17 @@ export default function ChangeEmail() {
 
   const { control, handleSubmit, formState, setValue } = useForm<FieldValues>({
     defaultValues: {
-      title: anime.title,
-      studio: anime.studio,
-      description: anime.description,
-      allowGaps: anime.allowGaps,
-      numberOfEpisodes: anime.numberOfEpisodes,
+      title: list.title,
+      description: list.description,
     },
-    resolver: zodResolver(createAnimeSchema),
+    resolver: zodResolver(createListSchema),
     shouldUnregister: false,
   });
 
   return (
     <ScrollView contentContainerStyle={[styles.pageContainer]}>
       <View style={[tw`flex w-1/2`, { rowGap: 24 }]}>
-        <Text style={tw`text-xl font-semibold mb-5`}>{"Update Anime"}</Text>
+        <Text style={tw`text-xl font-semibold mb-5`}>{"Update List"}</Text>
 
         <InputField
           label={"Title"}
@@ -90,14 +80,6 @@ export default function ChangeEmail() {
         />
 
         <InputField
-          label={"Studio name"}
-          name={"studio"}
-          control={control}
-          placeholder="Studio name"
-          keyboardType="default"
-          required
-        />
-        <InputField
           label={"Description"}
           name={"description"}
           control={control}
@@ -108,40 +90,17 @@ export default function ChangeEmail() {
           required
         />
 
-        <SwitchField
-          label={"Allow Gaps"}
-          name={"allowGaps"}
-          control={control}
-          setValue={setValue}
-        />
-        <InputField
-          label={"Number of episodes"}
-          name={"numberOfEpisodes"}
-          control={control}
-          placeholder="numberOfEpisodes"
-          keyboardType="numeric"
-          setValue={setValue}
-          onlyNumbers
-        />
         <View style={tw`flex gap-3 mb-4`}>
           <CustomButton
-            text={"Update Anime"}
-            onPress={handleSubmit((data: FieldValues | IAnime) =>
-              onSubmit(
-                data.title,
-                data.studio,
-                data.description,
-                data.numberOfEpisodes,
-                data.allowGaps
-              )
+            text={"Update List"}
+            onPress={handleSubmit((data: FieldValues | IList) =>
+              onSubmit(data.title, data.description)
             )}
             uppercase
             disabled={!formState.isValid}
           />
         </View>
       </View>
-      <MyToast text="Account created" visible={showSuccessToast} />
-      <MyToast text="Request failed to send." visible={showErrorToast} />
     </ScrollView>
   );
 }
