@@ -21,6 +21,7 @@ import tw from "@/src/constants/tailwind";
 import SwitchField from "@/src/components/Switch";
 import { useList } from "@/src/contexts/ListContext";
 import { IList, updateList } from "@/src/services/list";
+import AnimeDropdown from "@/src/components/AnimeDropdown";
 export default function ChangeEmail() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -89,7 +90,11 @@ export default function ChangeEmail() {
           multiline
           required
         />
-
+        <AnimeDropdown
+          items={list.animes || []}
+          addAnime
+          addAction={() => {}}
+        />
         <View style={tw`flex gap-3 mb-4`}>
           <CustomButton
             text={"Update List"}

@@ -23,7 +23,6 @@ const RoundedButton: React.FC<RoundedButtonProps> = (props) => {
       <CustomButtom
         icon={icon ? icon : <Entypo name="plus" size={30} color="black" />}
         onPress={() => {
-          console.log("here");
           action();
         }}
         rounded

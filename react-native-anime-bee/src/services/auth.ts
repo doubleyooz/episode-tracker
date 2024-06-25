@@ -12,7 +12,6 @@ const signIn = async (
 };
 
 const getCurrentUser = async (): Promise<AxiosResponse<Response>> => {
-  console.log("here");
   return await api.get<Response>(`auth/me`);
 };
 

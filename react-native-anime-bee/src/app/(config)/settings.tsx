@@ -9,7 +9,7 @@ import { logout } from "@/src/services/auth";
 
 export default function App() {
   const { token, user, setToken, setUser, handleSignout } = useAuth();
-  console.log({ config: token });
+
   if (!token) return <Redirect href={"/(auth)/login"} />;
 
   const signOut = async () => {

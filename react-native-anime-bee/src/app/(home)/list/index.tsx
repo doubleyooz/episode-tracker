@@ -41,7 +41,7 @@ export default function ViewListScreen() {
           }
         />
       </View>
-      <AnimeDropdown items={list.animes || []} addAnime />
+      <AnimeDropdown items={list.animes || []} />
     </SafeAreaView>
   );
 }

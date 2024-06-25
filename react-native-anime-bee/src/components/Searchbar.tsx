@@ -23,7 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
     <View
       style={tw`flex w-full flex-row items-center ${
         disabled ? "opacity-50" : ""
-      } h-12 rounded-2xl bg-background dark:bg-black border px-3 gap-2`}
+      } h-12 rounded-2xl bg-white dark:bg-black border px-3 gap-2`}
     >
       <Entypo name="magnifying-glass" size={24} color="black" />
 

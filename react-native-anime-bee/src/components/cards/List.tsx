@@ -11,6 +11,7 @@ import { useState } from "react";
 import { IAnime } from "@/src/services/anime";
 import tw from "@/src/constants/tailwind";
 import AnimeDropdown from "../AnimeDropdown";
+import { router } from "expo-router";
 
 interface ListCardProps {
   onPress: () => any;
@@ -24,6 +25,7 @@ interface ListCardProps {
   outline?: boolean;
   username?: string;
   addAnime?: boolean;
+  redirect?: boolean;
 }
 
 const ListCard: React.FC<ListCardProps> = (props) => {
@@ -37,23 +39,24 @@ const ListCard: React.FC<ListCardProps> = (props) => {
     variant = "primary",
     expanded = false,
     username,
+    redirect = false,
     addAnime = false,
     outline = false,
   } = props;
 
   const [showItems, setShowItems] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(expanded);
   const handleCollapse = () => {
     collapseAction();
     setShowItems(!showItems);
     console.log({ showItems, dropdown });
   };
 
-  if (isExpanded)
+  if (expanded)
     return (
       <TouchableOpacity
         onPress={() => {
           onPress();
+          if (redirect) router.navigate("/(home)/list");
         }}
         style={tw`flex self-stretch  ${
           variant === "primary"
@@ -125,11 +128,11 @@ const ListCard: React.FC<ListCardProps> = (props) => {
     >
       <TouchableWithoutFeedback
         onPress={() => {
-          setIsExpanded(!isExpanded);
+          onPress();
         }}
-        style={tw`flex self-stretch relative border  items-center min-w-[270px] h-14 overflow-hidden `}
+        style={tw`flex self-stretch relative border items-center min-w-[270px] h-14 overflow-hidden `}
       >
-        <View style={tw`flex flex-row items-center h-10 flex-1 ml-3 `}>
+        <View style={tw`flex flex-row items-center h-10 flex-1 ml-3`}>
           <Text
             style={tw`text-base h-[18px] tracking-wider font-semibold text-black`}
             numberOfLines={1}
